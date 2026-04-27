@@ -28,31 +28,40 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
   box-shadow: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
   padding: 18px; margin-bottom: 14px;
 }
-.panel-title { font-size: 13px; font-weight: 700; color: #475569; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+.panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 10px; flex-wrap: wrap; }
+.panel-title { font-size: 13px; font-weight: 700; color: #475569; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+.panel-hint { font-size: 11px; color: #94a3b8; }
 
-#regionInput {
+.text-input {
   width: 100%; padding: 12px 14px; font-size: 15px;
   border: 1.5px solid #e2e8f0; border-radius: 10px;
   outline: none; font-family: inherit;
 }
-#regionInput:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+.text-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
 
-.chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.match-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 8px; border-radius: 999px;
+  margin-top: 8px;
+  background: #ecfeff; color: #0e7490; border: 1px solid #a5f3fc;
+}
+.match-badge.freeform { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+
+.suggestions-label { font-size: 11px; color: #94a3b8; margin: 12px 0 6px; font-weight: 500; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip {
-  padding: 6px 12px; background: #f1f5f9; border: 1.5px solid transparent;
-  border-radius: 999px; font-size: 13px; color: #475569;
+  padding: 5px 11px; background: #f1f5f9; border: 1.5px solid transparent;
+  border-radius: 999px; font-size: 12px; color: #475569;
   cursor: pointer; font-family: inherit; transition: all 0.15s;
   user-select: none;
 }
 .chip:hover { background: #e0e7ff; color: #4338ca; }
 .chip.active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
 
-.cuisine-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; margin-top: 10px; }
-.cuisine-grid .chip { text-align: center; }
-
-.search-action { display: flex; gap: 10px; align-items: center; margin-top: 4px; }
+.search-action { margin-top: 4px; }
 #searchBtn {
-  flex: 1; padding: 14px 22px; font-size: 16px; font-weight: 700;
+  width: 100%; padding: 14px 22px; font-size: 16px; font-weight: 700;
   background: #4f46e5; color: #fff; border: none; border-radius: 10px;
   cursor: pointer; transition: background 0.15s; font-family: inherit;
 }
@@ -140,6 +149,7 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 .breakdown-list li { margin: 0; }
 .breakdown-list .pos { color: #059669; font-weight: 500; }
 .breakdown-list .neg { color: #dc2626; font-weight: 500; }
+.breakdown-list .neutral { color: #94a3b8; }
 
 .card-link {
   display: inline-flex; align-items: center; gap: 4px;
@@ -182,8 +192,8 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 <body>
 <div class="container">
   <header>
-    <h1>🎯 LunmeCHU <span class="badge">v3 · 다차원 큐레이션</span></h1>
-    <p class="subtitle">지역 + 음식 + 목적 — 세 변수를 조합한 카카오맵 기반 식당 큐레이션</p>
+    <h1>🎯 LunmeCHU <span class="badge">v4 · 자유 입력 큐레이션</span></h1>
+    <p class="subtitle">지역 + 음식 + 목적 — 무엇이든 자유롭게 입력하세요. 칩은 빠른 예시일 뿐입니다.</p>
   </header>
 
   <div id="configWarning" class="config-warning">
@@ -192,8 +202,12 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 
   <!-- 1. 지역 -->
   <div class="panel">
-    <p class="panel-title">📍 지역</p>
-    <input type="text" id="regionInput" placeholder="지역명 입력 (예: 강남역, 홍대입구역, 충무로)" autofocus>
+    <div class="panel-header">
+      <p class="panel-title">📍 지역</p>
+      <span class="panel-hint">자유 입력 + 예시 클릭</span>
+    </div>
+    <input type="text" id="regionInput" class="text-input" placeholder="예: 강남역, 홍대입구역, 충무로, 망원동, 한남동..." autofocus>
+    <div class="suggestions-label">자주 쓰는 예시</div>
     <div class="chip-row" id="regionChips">
       <span class="chip" data-region="강남역">강남역</span>
       <span class="chip" data-region="홍대입구역">홍대입구역</span>
@@ -203,25 +217,41 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
       <span class="chip" data-region="잠실역">잠실역</span>
       <span class="chip" data-region="시청역">시청역</span>
       <span class="chip" data-region="충무로">충무로</span>
+      <span class="chip" data-region="망원동">망원동</span>
+      <span class="chip" data-region="한남동">한남동</span>
+      <span class="chip" data-region="이태원">이태원</span>
+      <span class="chip" data-region="합정">합정</span>
     </div>
   </div>
 
-  <!-- 2. 음식 카테고리 -->
+  <!-- 2. 음식 -->
   <div class="panel">
-    <p class="panel-title">🍽️ 음식 카테고리</p>
-    <div class="cuisine-grid" id="cuisineChips"></div>
+    <div class="panel-header">
+      <p class="panel-title">🍽️ 음식</p>
+      <span class="panel-hint">자유 입력 (예: 비건, 오마카세, 라멘) + 예시 클릭</span>
+    </div>
+    <input type="text" id="cuisineInput" class="text-input" placeholder="음식 종류·메뉴·스타일 무엇이든...">
+    <div id="cuisineMatchBadge"></div>
+    <div class="suggestions-label">예시 (클릭 시 자동 채움)</div>
+    <div class="chip-row" id="cuisineChips"></div>
   </div>
 
   <!-- 3. 목적 -->
   <div class="panel">
-    <p class="panel-title">🤝 만남의 목적</p>
+    <div class="panel-header">
+      <p class="panel-title">🤝 만남의 목적·분위기</p>
+      <span class="panel-hint">자유 입력 (예: 조용한, 야외 테라스, 노포) + 예시 클릭</span>
+    </div>
+    <input type="text" id="purposeInput" class="text-input" placeholder="목적·분위기·상황 무엇이든...">
+    <div id="purposeMatchBadge"></div>
+    <div class="suggestions-label">예시 (클릭 시 자동 채움)</div>
     <div class="chip-row" id="purposeChips"></div>
   </div>
 
   <!-- 검색 -->
   <div class="panel">
     <div class="selected-summary" id="selectedSummary">
-      지역·음식·목적을 모두 선택해주세요
+      세 칸을 모두 채워주세요
     </div>
     <div class="search-action" style="margin-top: 12px;">
       <button id="searchBtn" disabled>큐레이션 시작 →</button>
@@ -229,13 +259,13 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
   </div>
 
   <div class="criteria-panel">
-    <span class="ctitle">🧮 스코어링 알고리즘 (점수 산출 방식)</span>
-    선택한 음식·목적 키워드를 조합해 카카오맵에 <strong>최대 9~12회 호출</strong>한 뒤 가게별 점수를 매깁니다:<br>
-    · <code>등장 횟수 × 3점</code> (여러 키워드에서 잡힐수록 가산)<br>
-    · <code>음식 카테고리 일치 시 +5점</code> (예: "음식점 &gt; 일식 &gt; 초밥")<br>
-    · <code>가게명에 목적 키워드 포함 시 +3점</code> (예: 데이트 → "룸·다이닝·코스")<br>
-    · <code>주소가 입력 지역과 안 맞으면 -10점</code> (지역 필터링)<br>
-    각 카드 하단 <strong>"점수 산정 근거"</strong>에 상세 내역이 표시됩니다.
+    <span class="ctitle">🧮 스코어링 알고리즘</span>
+    입력한 음식·목적이 <strong>사전 등록 키워드와 일치하면 자동으로 9~10개 변형으로 확장</strong>해서 카카오맵에 호출하고, <strong>새로운 단어면 그대로 3개 조합</strong>으로 검색합니다.<br>
+    · <code>등장 횟수 × 3점</code> (여러 변형에서 잡힐수록 가산)<br>
+    · <code>음식 카테고리 일치 시 +5점</code><br>
+    · <code>가게명에 목적 키워드 포함 시 +3점/개</code><br>
+    · <code>주소가 입력 지역과 안 맞으면 -10점</code><br>
+    각 카드 하단 <strong>"점수 산정 근거"</strong>에 상세 내역 표시.
   </div>
 
   <div id="status" class="status"></div>
@@ -255,44 +285,50 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 </div>
 
 <script>
-// ===== 데이터 정의 =====
+// ===== 사전 등록 키워드 (자동 확장용) =====
 
-const CUISINES = {
-  korean:    { label: "한식", keywords: ["한식", "한정식", "백반"], categoryMatch: ["한식"] },
-  japanese:  { label: "일식", keywords: ["일식", "초밥", "라멘", "오마카세"], categoryMatch: ["일식", "일본"] },
-  western:   { label: "양식·이탈리안", keywords: ["양식", "파스타", "이탈리안", "스테이크"], categoryMatch: ["양식", "이탈리아"] },
-  chinese:   { label: "중식", keywords: ["중식", "중국집", "마라"], categoryMatch: ["중식", "중국"] },
-  asian:     { label: "동남아·아시안", keywords: ["베트남", "태국", "쌀국수", "인도"], categoryMatch: ["아시아", "베트남", "태국", "인도"] },
-  mexican:   { label: "멕시칸·남미", keywords: ["멕시칸", "타코", "부리또"], categoryMatch: ["멕시코", "남미"] },
-  meat:      { label: "고기·구이", keywords: ["고기집", "삼겹살", "갈비", "한우"], categoryMatch: ["육류", "고기", "갈비"] },
-  seafood:   { label: "해산물·횟집", keywords: ["횟집", "해산물", "조개", "초밥"], categoryMatch: ["해산물", "횟집", "수산"] },
-  bar:       { label: "술집·바", keywords: ["술집", "이자카야", "와인바", "포차"], categoryMatch: ["술집", "주점", "바"] },
-  cafe:      { label: "카페·디저트", keywords: ["카페", "디저트", "베이커리"], categoryMatch: ["카페", "디저트"] },
-  bunsik:    { label: "분식", keywords: ["분식", "떡볶이", "김밥"], categoryMatch: ["분식"] },
-  brunch:    { label: "브런치", keywords: ["브런치", "베이커리", "샌드위치"], categoryMatch: ["브런치", "베이커리"] },
-  noodle:    { label: "면요리", keywords: ["라멘", "우동", "국수"], categoryMatch: ["면", "국수", "라멘"] },
-  any:       { label: "전체 (음식 무관)", keywords: ["맛집"], categoryMatch: [] }
-};
+const CUISINE_PRESETS = [
+  { label: "한식", keywords: ["한식", "한정식", "백반"], categoryMatch: ["한식"] },
+  { label: "일식", keywords: ["일식", "초밥", "라멘", "오마카세"], categoryMatch: ["일식", "일본"] },
+  { label: "양식", keywords: ["양식", "파스타", "이탈리안", "스테이크"], categoryMatch: ["양식", "이탈리아"] },
+  { label: "중식", keywords: ["중식", "중국집", "마라"], categoryMatch: ["중식", "중국"] },
+  { label: "동남아", keywords: ["베트남", "태국", "쌀국수", "인도"], categoryMatch: ["아시아", "베트남", "태국", "인도"] },
+  { label: "멕시칸", keywords: ["멕시칸", "타코", "부리또"], categoryMatch: ["멕시코", "남미"] },
+  { label: "고기", keywords: ["고기집", "삼겹살", "갈비", "한우"], categoryMatch: ["육류", "고기", "갈비"] },
+  { label: "해산물", keywords: ["횟집", "해산물", "조개"], categoryMatch: ["해산물", "횟집", "수산"] },
+  { label: "술집", keywords: ["술집", "이자카야", "와인바"], categoryMatch: ["술집", "주점", "바"] },
+  { label: "카페", keywords: ["카페", "디저트", "베이커리"], categoryMatch: ["카페", "디저트"] },
+  { label: "분식", keywords: ["분식", "떡볶이", "김밥"], categoryMatch: ["분식"] },
+  { label: "브런치", keywords: ["브런치", "베이커리", "샌드위치"], categoryMatch: ["브런치", "베이커리"] },
+  { label: "라멘", keywords: ["라멘", "쇼유라멘", "돈코츠"], categoryMatch: ["라멘", "면", "일식"] },
+  { label: "오마카세", keywords: ["오마카세", "스시오마카세", "초밥"], categoryMatch: ["일식", "초밥"] },
+  { label: "와인바", keywords: ["와인바", "내추럴와인", "와인"], categoryMatch: ["와인바", "바"] },
+  { label: "비건", keywords: ["비건", "채식", "샐러드"], categoryMatch: ["비건", "채식"] }
+];
 
-const PURPOSES = {
-  date:      { label: "데이트", modifiers: ["데이트", "분위기", "룸"], nameBoosts: ["룸", "다이닝", "와인", "코스", "테라스"] },
-  hoesik:    { label: "회식", modifiers: ["회식", "단체", "룸"], nameBoosts: ["룸", "본점", "VIP"] },
-  family:    { label: "가족모임", modifiers: ["가족", "룸", "한정식"], nameBoosts: ["룸", "좌식", "한정식"] },
-  friend:    { label: "친구모임", modifiers: ["친구", "캐주얼", "맛집"], nameBoosts: [] },
-  business:  { label: "비즈니스 미팅", modifiers: ["미팅", "한정식", "조용한"], nameBoosts: ["룸", "한정식", "다이닝"] },
-  solo:      { label: "혼밥", modifiers: ["혼밥", "1인", "카운터"], nameBoosts: ["바", "1인"] },
-  special:   { label: "특별한 날·기념일", modifiers: ["기념일", "오마카세", "코스", "프라이빗"], nameBoosts: ["다이닝", "코스", "오마카세", "프라이빗"] },
-  casual:    { label: "캐주얼하게", modifiers: ["가성비", "맛집", "캐주얼"], nameBoosts: [] },
-  group:     { label: "단체 (10명+)", modifiers: ["단체", "예약", "룸", "대관"], nameBoosts: ["홀", "본점", "대관"] },
-  gourmet:   { label: "미식 탐방", modifiers: ["오마카세", "미슐랭", "셰프", "다이닝"], nameBoosts: ["오마카세", "다이닝", "비스트로"] }
-};
+const PURPOSE_PRESETS = [
+  { label: "데이트", modifiers: ["데이트", "분위기", "룸"], nameBoosts: ["룸", "다이닝", "와인", "코스", "테라스"] },
+  { label: "회식", modifiers: ["회식", "단체", "룸"], nameBoosts: ["룸", "본점", "VIP"] },
+  { label: "가족모임", modifiers: ["가족", "룸", "한정식"], nameBoosts: ["룸", "좌식", "한정식"] },
+  { label: "친구모임", modifiers: ["친구", "캐주얼", "맛집"], nameBoosts: [] },
+  { label: "비즈니스", modifiers: ["미팅", "한정식", "조용한"], nameBoosts: ["룸", "한정식", "다이닝"] },
+  { label: "혼밥", modifiers: ["혼밥", "1인", "카운터"], nameBoosts: ["바", "1인"] },
+  { label: "기념일", modifiers: ["기념일", "오마카세", "코스", "프라이빗"], nameBoosts: ["다이닝", "코스", "오마카세", "프라이빗"] },
+  { label: "캐주얼", modifiers: ["가성비", "맛집", "캐주얼"], nameBoosts: [] },
+  { label: "단체", modifiers: ["단체", "예약", "룸", "대관"], nameBoosts: ["홀", "본점", "대관"] },
+  { label: "미식탐방", modifiers: ["오마카세", "미슐랭", "셰프", "다이닝"], nameBoosts: ["오마카세", "다이닝", "비스트로"] },
+  { label: "조용한", modifiers: ["조용한", "한정식", "분위기"], nameBoosts: ["룸", "한정식", "다이닝"] },
+  { label: "야외·테라스", modifiers: ["테라스", "루프탑", "야외"], nameBoosts: ["테라스", "루프탑"] },
+  { label: "노포", modifiers: ["노포", "원조", "전통"], nameBoosts: ["원조", "본점"] },
+  { label: "신상", modifiers: ["신상", "핫플", "오픈"], nameBoosts: [] }
+];
 
 // ===== 상태 =====
 
 const STATE = {
   region: "",
-  cuisine: null,
-  purpose: null,
+  cuisine: "",
+  purpose: "",
   ranked: [],
   page: 0
 };
@@ -301,25 +337,55 @@ let kakaoReady = false;
 
 // ===== UI 렌더 =====
 
-function renderChipGrids() {
-  const cuisineEl = document.getElementById("cuisineChips");
-  cuisineEl.innerHTML = Object.entries(CUISINES).map(([key, c]) =>
-    `<span class="chip" data-cuisine="${key}">${c.label}</span>`
+function renderChips() {
+  document.getElementById("cuisineChips").innerHTML = CUISINE_PRESETS.map(c =>
+    `<span class="chip" data-value="${escapeAttr(c.label)}">${escapeHtml(c.label)}</span>`
   ).join("");
+  document.getElementById("purposeChips").innerHTML = PURPOSE_PRESETS.map(p =>
+    `<span class="chip" data-value="${escapeAttr(p.label)}">${escapeHtml(p.label)}</span>`
+  ).join("");
+}
 
-  const purposeEl = document.getElementById("purposeChips");
-  purposeEl.innerHTML = Object.entries(PURPOSES).map(([key, p]) =>
-    `<span class="chip" data-purpose="${key}">${p.label}</span>`
-  ).join("");
+function findCuisinePreset(text) {
+  const t = (text || "").trim();
+  return CUISINE_PRESETS.find(c => c.label === t);
+}
+function findPurposePreset(text) {
+  const t = (text || "").trim();
+  return PURPOSE_PRESETS.find(p => p.label === t);
+}
+
+function updateMatchBadges() {
+  const cBadge = document.getElementById("cuisineMatchBadge");
+  if (!STATE.cuisine) { cBadge.innerHTML = ""; }
+  else if (findCuisinePreset(STATE.cuisine)) {
+    cBadge.innerHTML = `<span class="match-badge">✨ 사전 등록 인식 → 자동 키워드 확장</span>`;
+  } else {
+    cBadge.innerHTML = `<span class="match-badge freeform">📝 자유 입력 → "${escapeHtml(STATE.cuisine)}" 그대로 검색</span>`;
+  }
+
+  const pBadge = document.getElementById("purposeMatchBadge");
+  if (!STATE.purpose) { pBadge.innerHTML = ""; }
+  else if (findPurposePreset(STATE.purpose)) {
+    pBadge.innerHTML = `<span class="match-badge">✨ 사전 등록 인식 → 자동 키워드 확장</span>`;
+  } else {
+    pBadge.innerHTML = `<span class="match-badge freeform">📝 자유 입력 → "${escapeHtml(STATE.purpose)}" 그대로 검색</span>`;
+  }
 }
 
 function updateSelectedSummary() {
   const el = document.getElementById("selectedSummary");
-  const region = STATE.region || "<지역 미입력>";
-  const cuisine = STATE.cuisine ? CUISINES[STATE.cuisine].label : "<음식 미선택>";
-  const purpose = STATE.purpose ? PURPOSES[STATE.purpose].label : "<목적 미선택>";
+  const region = STATE.region || "<지역>";
+  const cuisine = STATE.cuisine || "<음식>";
+  const purpose = STATE.purpose || "<목적>";
   el.innerHTML = `<strong>${escapeHtml(region)}</strong> · <strong>${escapeHtml(cuisine)}</strong> · <strong>${escapeHtml(purpose)}</strong>`;
   document.getElementById("searchBtn").disabled = !(STATE.region && STATE.cuisine && STATE.purpose);
+}
+
+function updateChipActive(containerId, value) {
+  document.querySelectorAll(`#${containerId} .chip`).forEach(c => {
+    c.classList.toggle("active", c.dataset.value === value || c.dataset.region === value);
+  });
 }
 
 // ===== 카카오 SDK =====
@@ -345,49 +411,51 @@ function searchKeywordViaSdk(keyword) {
 
 // ===== 알고리즘 =====
 
-function buildQueries(region, cuisineKey, purposeKey) {
-  const cuisine = CUISINES[cuisineKey];
-  const purpose = PURPOSES[purposeKey];
-  const queries = [];
+function expandInputs(region, cuisineRaw, purposeRaw) {
+  const cuisinePreset = findCuisinePreset(cuisineRaw);
+  const purposePreset = findPurposePreset(purposeRaw);
 
-  // 음식 키워드 × 목적 키워드 조합 (top 3 × top 3 = 9개)
-  for (const cuiKw of cuisine.keywords.slice(0, 3)) {
-    for (const purKw of purpose.modifiers.slice(0, 3)) {
-      queries.push({
-        text: `${region} ${cuiKw} ${purKw}`,
-        cuiKw, purKw
-      });
+  const cuisineKws = cuisinePreset ? cuisinePreset.keywords : [cuisineRaw];
+  const purposeKws = purposePreset ? purposePreset.modifiers : [purposeRaw];
+
+  const cuisineCategoryMatch = cuisinePreset ? cuisinePreset.categoryMatch : [cuisineRaw];
+  const purposeNameBoosts = purposePreset ? purposePreset.nameBoosts : [purposeRaw];
+
+  const queries = [];
+  for (const c of cuisineKws.slice(0, 3)) {
+    for (const p of purposeKws.slice(0, 3)) {
+      queries.push(`${region} ${c} ${p}`);
     }
   }
-  // 베이스라인: 음식만 (purpose 영향 없는 인기 가게도 포함)
-  queries.push({
-    text: `${region} ${cuisine.keywords[0]}`,
-    cuiKw: cuisine.keywords[0], purKw: null
-  });
-  return queries;
+  // 베이스라인: 음식 키워드만
+  queries.push(`${region} ${cuisineKws[0]}`);
+
+  return {
+    queries,
+    cuisineLabel: cuisinePreset ? cuisinePreset.label : cuisineRaw,
+    cuisineCategoryMatch,
+    purposeNameBoosts,
+    isCuisinePreset: !!cuisinePreset,
+    isPurposePreset: !!purposePreset
+  };
 }
 
-async function runCuration(region, cuisineKey, purposeKey) {
-  const cuisine = CUISINES[cuisineKey];
-  const purpose = PURPOSES[purposeKey];
-  const queries = buildQueries(region, cuisineKey, purposeKey);
+async function runCuration(region, cuisineRaw, purposeRaw) {
+  const ctx = expandInputs(region, cuisineRaw, purposeRaw);
+  const results = await Promise.all(ctx.queries.map(q => searchKeywordViaSdk(q)));
 
-  const results = await Promise.all(queries.map(q => searchKeywordViaSdk(q.text)));
-
-  // 가게별 집계
   const map = new Map();
   results.forEach((places, idx) => {
-    const q = queries[idx];
+    const queryText = ctx.queries[idx];
     places.forEach(p => {
       const id = p.id;
       if (!map.has(id)) {
         map.set(id, { place: p, hits: [] });
       }
-      map.get(id).hits.push(q.text);
+      map.get(id).hits.push(queryText);
     });
   });
 
-  // 스코어링
   const candidates = [...map.values()].map(({ place, hits }) => {
     const breakdown = [];
     let score = 0;
@@ -398,21 +466,27 @@ async function runCuration(region, cuisineKey, purposeKey) {
     score += freqScore;
 
     // 2) 카테고리 매치
-    const categoryHit = cuisine.categoryMatch.length > 0 &&
-      cuisine.categoryMatch.some(c => (place.category_name || "").includes(c));
-    if (categoryHit) {
-      breakdown.push({ kind: "pos", text: `${cuisine.label} 카테고리 일치 (+5)` });
+    const categoryName = place.category_name || "";
+    const matchedCat = ctx.cuisineCategoryMatch.find(c => categoryName.includes(c));
+    if (matchedCat) {
+      const desc = ctx.isCuisinePreset
+        ? `${ctx.cuisineLabel} 카테고리 일치 (+5)`
+        : `카테고리에 "${matchedCat}" 포함 (+5)`;
+      breakdown.push({ kind: "pos", text: desc });
       score += 5;
-    } else if (cuisine.categoryMatch.length > 0) {
+    } else {
       breakdown.push({ kind: "neutral", text: `카테고리 미일치 (+0)` });
     }
 
-    // 3) 가게명에 목적 키워드 포함
-    const nameLower = (place.place_name || "");
-    const nameBoosts = purpose.nameBoosts.filter(b => nameLower.includes(b));
-    if (nameBoosts.length > 0) {
-      const boostScore = nameBoosts.length * 3;
-      breakdown.push({ kind: "pos", text: `이름에 [${nameBoosts.join(", ")}] 포함 (+${boostScore})` });
+    // 3) 가게명 부스트
+    const placeName = place.place_name || "";
+    const matchedBoosts = ctx.purposeNameBoosts.filter(b => placeName.includes(b));
+    if (matchedBoosts.length > 0) {
+      const boostScore = matchedBoosts.length * 3;
+      breakdown.push({
+        kind: "pos",
+        text: `이름에 [${matchedBoosts.join(", ")}] 포함 (+${boostScore})`
+      });
       score += boostScore;
     }
 
@@ -520,7 +594,7 @@ function escapeAttr(s) { return escapeHtml(s); }
 
 async function runSearch() {
   if (!STATE.region || !STATE.cuisine || !STATE.purpose) {
-    setStatus("지역·음식·목적을 모두 선택해주세요.", "error");
+    setStatus("지역·음식·목적을 모두 입력해주세요.", "error");
     return;
   }
   if (!kakaoReady) {
@@ -528,9 +602,7 @@ async function runSearch() {
     return;
   }
 
-  const c = CUISINES[STATE.cuisine].label;
-  const p = PURPOSES[STATE.purpose].label;
-  setStatus(`"${STATE.region} · ${c} · ${p}" 큐레이션 중... (최대 10개 키워드 호출)`, "");
+  setStatus(`"${STATE.region} · ${STATE.cuisine} · ${STATE.purpose}" 큐레이션 중...`, "");
 
   const btn = document.getElementById("searchBtn");
   btn.disabled = true;
@@ -557,51 +629,64 @@ async function runSearch() {
 // ===== 이벤트 바인딩 =====
 
 function bindEvents() {
-  // 지역 입력
+  // 지역
   const regionInput = document.getElementById("regionInput");
   regionInput.addEventListener("input", e => {
     STATE.region = e.target.value.trim();
-    document.querySelectorAll("#regionChips .chip").forEach(c =>
-      c.classList.toggle("active", c.dataset.region === STATE.region)
-    );
+    updateChipActive("regionChips", STATE.region);
+    updateSelectedSummary();
+  });
+  document.getElementById("regionChips").addEventListener("click", e => {
+    const chip = e.target.closest(".chip");
+    if (!chip) return;
+    STATE.region = chip.dataset.region;
+    regionInput.value = STATE.region;
+    updateChipActive("regionChips", STATE.region);
     updateSelectedSummary();
   });
 
-  // 지역 칩
-  document.querySelectorAll("#regionChips .chip").forEach(chip => {
-    chip.addEventListener("click", () => {
-      STATE.region = chip.dataset.region;
-      regionInput.value = STATE.region;
-      document.querySelectorAll("#regionChips .chip").forEach(c => c.classList.remove("active"));
-      chip.classList.add("active");
-      updateSelectedSummary();
-    });
+  // 음식
+  const cuisineInput = document.getElementById("cuisineInput");
+  cuisineInput.addEventListener("input", e => {
+    STATE.cuisine = e.target.value.trim();
+    updateChipActive("cuisineChips", STATE.cuisine);
+    updateMatchBadges();
+    updateSelectedSummary();
   });
-
-  // 음식 칩 (이벤트 위임)
   document.getElementById("cuisineChips").addEventListener("click", e => {
     const chip = e.target.closest(".chip");
     if (!chip) return;
-    STATE.cuisine = chip.dataset.cuisine;
-    document.querySelectorAll("#cuisineChips .chip").forEach(c => c.classList.remove("active"));
-    chip.classList.add("active");
+    STATE.cuisine = chip.dataset.value;
+    cuisineInput.value = STATE.cuisine;
+    updateChipActive("cuisineChips", STATE.cuisine);
+    updateMatchBadges();
     updateSelectedSummary();
   });
 
-  // 목적 칩
+  // 목적
+  const purposeInput = document.getElementById("purposeInput");
+  purposeInput.addEventListener("input", e => {
+    STATE.purpose = e.target.value.trim();
+    updateChipActive("purposeChips", STATE.purpose);
+    updateMatchBadges();
+    updateSelectedSummary();
+  });
   document.getElementById("purposeChips").addEventListener("click", e => {
     const chip = e.target.closest(".chip");
     if (!chip) return;
-    STATE.purpose = chip.dataset.purpose;
-    document.querySelectorAll("#purposeChips .chip").forEach(c => c.classList.remove("active"));
-    chip.classList.add("active");
+    STATE.purpose = chip.dataset.value;
+    purposeInput.value = STATE.purpose;
+    updateChipActive("purposeChips", STATE.purpose);
+    updateMatchBadges();
     updateSelectedSummary();
   });
 
   // 검색 버튼
   document.getElementById("searchBtn").addEventListener("click", runSearch);
-  regionInput.addEventListener("keydown", e => {
-    if (e.key === "Enter" && !document.getElementById("searchBtn").disabled) runSearch();
+  [regionInput, cuisineInput, purposeInput].forEach(input => {
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !document.getElementById("searchBtn").disabled) runSearch();
+    });
   });
 
   // 페이지네이션
@@ -619,7 +704,7 @@ function bindEvents() {
 // ===== 초기화 =====
 
 window.addEventListener("load", () => {
-  renderChipGrids();
+  renderChips();
   bindEvents();
   initKakao();
 });
