@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지역별 식사 추천 · 카카오맵</title>
+
+<!--
+  ⚠️ 중요: 아래 YOUR_KAKAO_JS_KEY_HERE 부분을
+  Jongkyung님이 카카오 개발자센터에서 발급받은
+  "JavaScript 키"로 교체하세요.
+  발급 위치: https://developers.kakao.com → 내 애플리케이션 → 앱 키 → JavaScript 키
+-->
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=53999d2d3a79a4b914b47bb91e2e6e3b&libraries=services&autoload=false"></script>
+
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  background: #f6f7fb;
+  color: #0f172a;
+  line-height: 1.5;
+}
+.container { max-width: 1280px; margin: 0 auto; padding: 24px 20px 60px; }
+header { margin-bottom: 16px; }
+h1 { font-size: 24px; margin: 0 0 4px; font-weight: 700; }
+.subtitle { color: #64748b; font-size: 14px; margin: 0; }
+
+.search-card {
+  background: #fff; border-radius: 14px; padding: 18px;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  margin: 16px 0 14px;
+}
+.search-row { display: flex; gap: 10px; }
+#regionInput {
+  flex: 1; padding: 12px 14px; font-size: 15px;
+  border: 1.5px solid #e2e8f0; border-radius: 10px;
+  outline: none; font-family: inherit;
+}
+#regionInput:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+#searchBtn {
+  padding: 12px 22px; font-size: 15px; font-weight: 600;
+  background: #4f46e5; color: #fff; border: none; border-radius: 10px;
+  cursor: pointer; transition: background 0.15s; font-family: inherit;
+}
+#searchBtn:hover { background: #4338ca; }
+#searchBtn:disabled { background: #94a3b8; cursor: not-allowed; }
+
+.quick-regions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.chip {
+  padding: 6px 12px; background: #f1f5f9; border: 1px solid #e2e8f0;
+  border-radius: 999px; font-size: 13px; color: #475569;
+  cursor: pointer; font-family: inherit; transition: all 0.15s;
+}
+.chip:hover { background: #e0e7ff; border-color: #c7d2fe; color: #4338ca; }
+
+.criteria-panel {
+  margin: 14px 0; padding: 14px 16px;
+  background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
+  border: 1px solid #dbeafe; border-radius: 12px;
+  font-size: 13px; color: #1e3a8a; line-height: 1.65;
+}
+.criteria-panel .ctitle { font-weight: 700; color: #1e3a8a; margin-bottom: 4px; display: block; }
+.criteria-panel code { background: #dbeafe; padding: 1px 6px; border-radius: 4px; font-size: 12px; color: #1e40af; }
+
+.status {
+  padding: 10px 14px; background: #fef3c7; border-radius: 8px;
+  color: #92400e; font-size: 13px; margin-bottom: 14px; display: none;
+}
+.status.show { display: block; }
+.status.error { background: #fee2e2; color: #991b1b; }
+.status.success { background: #d1fae5; color: #065f46; }
+
+.config-warning {
+  margin-bottom: 14px; padding: 12px 14px;
+  background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px;
+  font-size: 13px; color: #991b1b; display: none;
+}
+.config-warning.show { display: block; }
+.config-warning strong { color: #7f1d1d; }
+.config-warning code { background: #fee2e2; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+
+.categories {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+@media (max-width: 1000px) { .categories { grid-template-columns: 1fr; } }
+
+.category {
+  background: #fff; border-radius: 14px; padding: 18px 16px;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  display: flex; flex-direction: column;
+}
+.cat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cat-title { font-size: 17px; font-weight: 700; margin: 0; }
+.cat-rank-info {
+  font-size: 12px; color: #475569; background: #f1f5f9;
+  padding: 3px 10px; border-radius: 999px; font-weight: 600;
+}
+.cat-lunch .cat-title { color: #ea580c; }
+.cat-dinner .cat-title { color: #dc2626; }
+.cat-drinks .cat-title { color: #7c3aed; }
+
+.cat-comment {
+  font-size: 12px; color: #64748b;
+  background: #fafafa; border: 1px dashed #e2e8f0;
+  padding: 8px 10px; border-radius: 8px; margin-bottom: 10px; line-height: 1.5;
+}
+.cat-comment strong { color: #334155; }
+
+.fail-notice {
+  font-size: 11px; color: #b45309;
+  background: #fffbeb; border: 1px solid #fde68a;
+  padding: 6px 10px; border-radius: 6px; margin-bottom: 10px; display: none;
+}
+.fail-notice.show { display: block; }
+
+.cards { display: flex; flex-direction: column; gap: 10px; min-height: 80px; flex: 1; }
+.card {
+  position: relative; padding: 12px 14px 12px 46px;
+  border: 1px solid #e2e8f0; border-radius: 10px;
+  background: #fafafa; transition: all 0.15s;
+}
+.card:hover { border-color: #c7d2fe; background: #f5f7ff; }
+.rank-badge {
+  position: absolute; left: 12px; top: 12px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #475569; color: #fff;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.rank-badge.top1 { background: #facc15; color: #78350f; }
+.rank-badge.top2 { background: #cbd5e1; color: #1e293b; }
+.rank-badge.top3 { background: #fdba74; color: #7c2d12; }
+.cat-lunch .rank-badge:not(.top1):not(.top2):not(.top3) { background: #fb923c; }
+.cat-dinner .rank-badge:not(.top1):not(.top2):not(.top3) { background: #f87171; }
+.cat-drinks .rank-badge:not(.top1):not(.top2):not(.top3) { background: #a78bfa; }
+
+.card-name { font-weight: 600; font-size: 14px; margin: 0 0 6px; color: #0f172a; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+.tag { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 4px; font-weight: 500; }
+.tag-cat { background: #f1f5f9; color: #475569; }
+.tag-src { background: #ede9fe; color: #5b21b6; }
+.cat-lunch .tag-cat { background: #fff7ed; color: #c2410c; }
+.cat-dinner .tag-cat { background: #fef2f2; color: #b91c1c; }
+.cat-drinks .tag-cat { background: #f5f3ff; color: #6d28d9; }
+.card-addr { font-size: 12px; color: #475569; margin: 0 0 4px; line-height: 1.4; }
+.card-meta { font-size: 11px; color: #94a3b8; margin: 0 0 8px; }
+.card-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; color: #4f46e5; text-decoration: none; font-weight: 500;
+}
+.card-link:hover { text-decoration: underline; }
+
+.skeleton {
+  height: 70px;
+  background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 10px;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.empty { color: #94a3b8; font-size: 13px; text-align: center; padding: 20px 0; }
+
+.pagination {
+  display: flex; gap: 6px; justify-content: space-between;
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid #f1f5f9;
+}
+.page-btn {
+  flex: 1; padding: 8px 10px; font-size: 12px; font-weight: 600;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;
+  cursor: pointer; font-family: inherit; color: #475569; transition: all 0.15s;
+}
+.page-btn:hover:not(:disabled) { background: #eef2ff; border-color: #c7d2fe; color: #4338ca; }
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.tip {
+  margin-top: 18px; padding: 12px 14px;
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;
+  font-size: 12px; color: #475569; line-height: 1.6;
+}
+.tip strong { color: #0f172a; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🗺️ 지역별 식사 추천 <span style="font-size:13px;font-weight:500;color:#94a3b8;margin-left:6px;">v3 · 공유용</span></h1>
+    <p class="subtitle">카카오맵 JavaScript SDK 기반 · 점심 / 저녁 / 술자리 자동 큐레이션</p>
+  </header>
+
+  <div id="configWarning" class="config-warning">
+    <strong>⚠️ 카카오 JS 키 설정이 필요합니다</strong> ·
+    HTML의 <code>YOUR_KAKAO_JS_KEY_HERE</code> 부분을 카카오 개발자센터에서 발급받은 JavaScript 키로 교체하세요.
+  </div>
+
+  <div class="search-card">
+    <div class="search-row">
+      <input type="text" id="regionInput" placeholder="지역명을 입력하세요 (예: 강남역, 충무로, 홍대입구역)" autofocus>
+      <button id="searchBtn">검색</button>
+    </div>
+    <div class="quick-regions">
+      <button class="chip" data-region="강남역">강남역</button>
+      <button class="chip" data-region="홍대입구역">홍대입구역</button>
+      <button class="chip" data-region="성수동">성수동</button>
+      <button class="chip" data-region="판교역">판교역</button>
+      <button class="chip" data-region="여의도역">여의도역</button>
+      <button class="chip" data-region="잠실역">잠실역</button>
+      <button class="chip" data-region="시청역">시청역</button>
+      <button class="chip" data-region="충무로">충무로</button>
+    </div>
+  </div>
+
+  <div class="criteria-panel">
+    <span class="ctitle">🎯 추천 기준</span>
+    카테고리별 <code>4개 키워드</code>를 카카오맵에 동시 호출(키워드당 최대 15곳) → <strong>나온 순서대로 중복 제거하며 통합 랭킹</strong>(최대 ~50곳).
+    카카오맵 정렬은 <strong>키워드 매칭도 + 인기도(조회·즐겨찾기 등)</strong>로 추정. 카드의 <code>출처 태그</code>로 어떤 키워드에서 나왔는지 확인 가능.
+  </div>
+
+  <div id="status" class="status"></div>
+
+  <div class="categories">
+    <section class="category cat-lunch" data-cat="lunch">
+      <div class="cat-header">
+        <h2 class="cat-title">🍱 점심</h2>
+        <span class="cat-rank-info" id="lunchRankInfo">-</span>
+      </div>
+      <div class="cat-comment">
+        <strong>추천 로직</strong> · "점심 맛집 / 한식 / 일식 / 분식" 4개 키워드 통합 → 카카오맵 인기순 우선
+      </div>
+      <div class="fail-notice" id="lunchFail"></div>
+      <div class="cards" id="lunchCards"><div class="empty">지역을 입력하고 검색해주세요</div></div>
+      <div class="pagination">
+        <button class="page-btn" data-cat="lunch" data-dir="prev" disabled>← 이전 랭킹</button>
+        <button class="page-btn" data-cat="lunch" data-dir="next" disabled>다음 랭킹 →</button>
+      </div>
+    </section>
+
+    <section class="category cat-dinner" data-cat="dinner">
+      <div class="cat-header">
+        <h2 class="cat-title">🍽️ 저녁</h2>
+        <span class="cat-rank-info" id="dinnerRankInfo">-</span>
+      </div>
+      <div class="cat-comment">
+        <strong>추천 로직</strong> · "저녁 맛집 / 고기집 / 파스타 / 데이트" 4개 키워드 통합 → 카카오맵 인기순 우선
+      </div>
+      <div class="fail-notice" id="dinnerFail"></div>
+      <div class="cards" id="dinnerCards"><div class="empty">지역을 입력하고 검색해주세요</div></div>
+      <div class="pagination">
+        <button class="page-btn" data-cat="dinner" data-dir="prev" disabled>← 이전 랭킹</button>
+        <button class="page-btn" data-cat="dinner" data-dir="next" disabled>다음 랭킹 →</button>
+      </div>
+    </section>
+
+    <section class="category cat-drinks" data-cat="drinks">
+      <div class="cat-header">
+        <h2 class="cat-title">🍻 술자리</h2>
+        <span class="cat-rank-info" id="drinksRankInfo">-</span>
+      </div>
+      <div class="cat-comment">
+        <strong>추천 로직</strong> · "술집 / 이자카야 / 와인바 / 포차" 4개 키워드 통합 → 카카오맵 인기순 우선
+      </div>
+      <div class="fail-notice" id="drinksFail"></div>
+      <div class="cards" id="drinksCards"><div class="empty">지역을 입력하고 검색해주세요</div></div>
+      <div class="pagination">
+        <button class="page-btn" data-cat="drinks" data-dir="prev" disabled>← 이전 랭킹</button>
+        <button class="page-btn" data-cat="drinks" data-dir="next" disabled>다음 랭킹 →</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="tip">
+    💡 <strong>활용 Tip</strong> · 카드의 "카카오맵에서 보기"를 누르면 영업시간·리뷰·메뉴·사진을 볼 수 있어요.
+  </div>
+</div>
+
+<script>
+const PAGE_SIZE = 5;
+const RESULTS_PER_KEYWORD = 15; // 카카오 SDK 최대치
+
+const KEYWORDS = {
+  lunch:  ["점심 맛집", "한식", "일식", "분식"],
+  dinner: ["저녁 맛집", "고기집", "파스타", "데이트"],
+  drinks: ["술집", "이자카야", "와인바", "포차"]
+};
+
+const CONTAINERS = {
+  lunch:  { cards: "lunchCards",  rankInfo: "lunchRankInfo",  fail: "lunchFail"  },
+  dinner: { cards: "dinnerCards", rankInfo: "dinnerRankInfo", fail: "dinnerFail" },
+  drinks: { cards: "drinksCards", rankInfo: "drinksRankInfo", fail: "drinksFail" }
+};
+
+const STATE = {
+  lunch:  { ranked: [], page: 0 },
+  dinner: { ranked: [], page: 0 },
+  drinks: { ranked: [], page: 0 }
+};
+
+let kakaoReady = false;
+
+// 카카오 SDK 로드 확인 + 초기화
+function initKakao() {
+  // SDK 스크립트가 로드 안 된 경우 (잘못된 키 등)
+  if (typeof kakao === "undefined" || !kakao.maps) {
+    document.getElementById("configWarning").classList.add("show");
+    return;
+  }
+  kakao.maps.load(function() {
+    kakaoReady = true;
+  });
+}
+
+// keywordSearch를 Promise로 래핑
+function searchKeywordViaSdk(keyword) {
+  return new Promise((resolve) => {
+    if (!kakaoReady) { resolve({ status: "ERROR", places: [] }); return; }
+    const ps = new kakao.maps.services.Places();
+    ps.keywordSearch(keyword, function(data, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        // 음식점 카테고리(FD6)와 카페(CE7)만, 그 외는 일단 포함
+        resolve({ status: "OK", places: data });
+      } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+        resolve({ status: "ZERO", places: [] });
+      } else {
+        resolve({ status: "ERROR", places: [] });
+      }
+    }, { size: RESULTS_PER_KEYWORD });
+  });
+}
+
+// 1회 자동 재시도 포함
+async function searchKeyword(region, keyword) {
+  const fullQuery = `${region} ${keyword}`;
+  const first = await searchKeywordViaSdk(fullQuery);
+  if (first.status === "OK" && first.places.length > 0) {
+    return { keyword, places: first.places, ok: true };
+  }
+  await new Promise(r => setTimeout(r, 300));
+  const retry = await searchKeywordViaSdk(fullQuery);
+  if (retry.status === "OK" && retry.places.length > 0) {
+    return { keyword, places: retry.places, ok: true };
+  }
+  return { keyword, places: [], ok: false, error: retry.status === "ERROR" };
+}
+
+async function fetchCategory(region, categoryKey) {
+  const keywords = KEYWORDS[categoryKey];
+  const results = await Promise.all(keywords.map(kw => searchKeyword(region, kw)));
+  const seen = new Set();
+  const merged = [];
+  const failed = [];
+  for (const { keyword, places, ok, error } of results) {
+    if (!ok) failed.push({ keyword, error: !!error });
+    for (const p of places) {
+      const key = (p.id || p.place_name).toString().toLowerCase().trim();
+      if (!seen.has(key)) {
+        seen.add(key);
+        merged.push({ ...p, sourceKeyword: keyword });
+      }
+    }
+  }
+  return { ranked: merged, failed };
+}
+
+function renderCategory(categoryKey) {
+  const state = STATE[categoryKey];
+  const { cards, rankInfo } = CONTAINERS[categoryKey];
+  const cardsEl = document.getElementById(cards);
+  const rankEl = document.getElementById(rankInfo);
+
+  const total = state.ranked.length;
+  if (total === 0) {
+    cardsEl.innerHTML = '<div class="empty">결과가 없어요. 다른 지역명을 시도해보세요.</div>';
+    rankEl.textContent = "0곳";
+    updatePagButtons(categoryKey, 0, 0);
+    return;
+  }
+
+  const start = state.page * PAGE_SIZE;
+  const end = Math.min(start + PAGE_SIZE, total);
+  const slice = state.ranked.slice(start, end);
+
+  rankEl.textContent = `${start + 1}–${end}위 / 총 ${total}곳`;
+
+  cardsEl.innerHTML = slice.map((p, i) => {
+    const rank = start + i + 1;
+    const rankClass = rank === 1 ? "top1" : rank === 2 ? "top2" : rank === 3 ? "top3" : "";
+    const shortCat = (p.category_name || "").split(">").slice(-1)[0].trim() || "";
+    const addr = p.road_address_name || p.address_name || "";
+    const phone = p.phone || "";
+    return `
+      <div class="card">
+        <div class="rank-badge ${rankClass}">${rank}</div>
+        <div class="card-name">${escapeHtml(p.place_name)}</div>
+        <div class="tag-row">
+          ${shortCat ? `<span class="tag tag-cat">${escapeHtml(shortCat)}</span>` : ""}
+          ${p.sourceKeyword ? `<span class="tag tag-src">${escapeHtml(p.sourceKeyword)}에서</span>` : ""}
+        </div>
+        ${addr ? `<div class="card-addr">📍 ${escapeHtml(addr)}</div>` : ""}
+        ${phone ? `<div class="card-meta">☎ ${escapeHtml(phone)}</div>` : ""}
+        ${p.place_url ? `<a class="card-link" href="${escapeAttr(p.place_url)}" target="_blank" rel="noopener">카카오맵에서 보기 →</a>` : ""}
+      </div>
+    `;
+  }).join("");
+
+  updatePagButtons(categoryKey, state.page, Math.ceil(total / PAGE_SIZE));
+}
+
+function updatePagButtons(categoryKey, page, totalPages) {
+  document.querySelectorAll(`.page-btn[data-cat="${categoryKey}"]`).forEach(btn => {
+    if (btn.dataset.dir === "prev") btn.disabled = page <= 0;
+    if (btn.dataset.dir === "next") btn.disabled = page >= totalPages - 1 || totalPages === 0;
+  });
+}
+
+function renderFailures(categoryKey, failed) {
+  const failEl = document.getElementById(CONTAINERS[categoryKey].fail);
+  if (!failed || failed.length === 0) {
+    failEl.classList.remove("show");
+    failEl.textContent = "";
+    return;
+  }
+  const errored = failed.filter(f => f.error).map(f => f.keyword);
+  const empty = failed.filter(f => !f.error).map(f => f.keyword);
+  const parts = [];
+  if (errored.length) parts.push(`⚠️ 호출 실패: ${errored.join(", ")}`);
+  if (empty.length) parts.push(`🔍 결과 없음: ${empty.join(", ")}`);
+  failEl.textContent = parts.join(" · ");
+  failEl.classList.add("show");
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+function showSkeletons() {
+  for (const key of Object.keys(CONTAINERS)) {
+    const el = document.getElementById(CONTAINERS[key].cards);
+    el.innerHTML = Array.from({length: 5}).map(() => '<div class="skeleton"></div>').join("");
+    document.getElementById(CONTAINERS[key].rankInfo).textContent = "검색중...";
+    document.getElementById(CONTAINERS[key].fail).classList.remove("show");
+  }
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById("status");
+  if (!msg) { el.classList.remove("show"); return; }
+  el.className = "status show " + (type || "");
+  el.textContent = msg;
+}
+
+async function runSearch(region) {
+  region = (region || "").trim();
+  if (!region) { setStatus("지역명을 입력해주세요.", "error"); return; }
+  if (!kakaoReady) {
+    setStatus("카카오 SDK가 아직 준비되지 않았어요. JS 키 설정을 확인해주세요.", "error");
+    return;
+  }
+  setStatus(`"${region}" 검색 중... (12개 키워드 동시 호출)`, "");
+  const btn = document.getElementById("searchBtn");
+  btn.disabled = true;
+  btn.textContent = "검색중...";
+  showSkeletons();
+
+  const t0 = performance.now();
+  try {
+    const [lunch, dinner, drinks] = await Promise.all([
+      fetchCategory(region, "lunch"),
+      fetchCategory(region, "dinner"),
+      fetchCategory(region, "drinks")
+    ]);
+    STATE.lunch  = { ranked: lunch.ranked,  page: 0 };
+    STATE.dinner = { ranked: dinner.ranked, page: 0 };
+    STATE.drinks = { ranked: drinks.ranked, page: 0 };
+    renderCategory("lunch");  renderFailures("lunch",  lunch.failed);
+    renderCategory("dinner"); renderFailures("dinner", dinner.failed);
+    renderCategory("drinks"); renderFailures("drinks", drinks.failed);
+    const elapsed = ((performance.now() - t0) / 1000).toFixed(1);
+    const total = lunch.ranked.length + dinner.ranked.length + drinks.ranked.length;
+    setStatus(`✓ "${region}" 통합 랭킹 ${total}곳 (${elapsed}초)`, "success");
+  } catch (e) {
+    console.error(e);
+    setStatus("검색 중 오류가 발생했어요. JS 키 또는 도메인 등록을 확인해주세요.", "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "검색";
+  }
+}
+
+// Event bindings
+document.getElementById("searchBtn").addEventListener("click", () => {
+  runSearch(document.getElementById("regionInput").value);
+});
+document.getElementById("regionInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") runSearch(e.target.value);
+});
+document.querySelectorAll(".chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    const region = chip.dataset.region;
+    document.getElementById("regionInput").value = region;
+    runSearch(region);
+  });
+});
+document.querySelectorAll(".page-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const cat = btn.dataset.cat;
+    const dir = btn.dataset.dir;
+    const state = STATE[cat];
+    const totalPages = Math.ceil(state.ranked.length / PAGE_SIZE);
+    if (dir === "prev" && state.page > 0) state.page -= 1;
+    if (dir === "next" && state.page < totalPages - 1) state.page += 1;
+    renderCategory(cat);
+  });
+});
+
+// Init
+window.addEventListener("load", initKakao);
+</script>
+</body>
+</html>
