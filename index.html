@@ -32,21 +32,36 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 .panel-title { font-size: 13px; font-weight: 700; color: #475569; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
 .panel-hint { font-size: 11px; color: #94a3b8; }
 
-.text-input {
-  width: 100%; padding: 12px 14px; font-size: 15px;
+.multi-input {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 8px 10px;
   border: 1.5px solid #e2e8f0; border-radius: 10px;
-  outline: none; font-family: inherit;
+  align-items: center; min-height: 48px;
+  background: #fff;
 }
-.text-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
-
-.match-badge {
+.multi-input:focus-within { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+.input-tag {
   display: inline-flex; align-items: center; gap: 4px;
-  font-size: 11px; font-weight: 600;
-  padding: 3px 8px; border-radius: 999px;
-  margin-top: 8px;
-  background: #ecfeff; color: #0e7490; border: 1px solid #a5f3fc;
+  padding: 4px 4px 4px 10px;
+  background: #eef2ff; border-radius: 6px;
+  font-size: 13px; color: #4338ca; font-weight: 500;
 }
-.match-badge.freeform { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+.input-tag.preset { background: #ecfeff; color: #0e7490; }
+.input-tag button {
+  background: none; border: none;
+  color: inherit; opacity: 0.7;
+  font-size: 16px; line-height: 1;
+  padding: 2px 6px; cursor: pointer;
+  border-radius: 4px;
+}
+.input-tag button:hover { opacity: 1; background: rgba(0,0,0,0.05); }
+.multi-input-field {
+  flex: 1; min-width: 120px;
+  border: none; outline: none;
+  font-size: 15px; font-family: inherit;
+  padding: 4px 6px;
+  background: transparent;
+}
 
 .suggestions-label { font-size: 11px; color: #94a3b8; margin: 12px 0 6px; font-weight: 500; }
 .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -59,7 +74,6 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 .chip:hover { background: #e0e7ff; color: #4338ca; }
 .chip.active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
 
-.search-action { margin-top: 4px; }
 #searchBtn {
   width: 100%; padding: 14px 22px; font-size: 16px; font-weight: 700;
   background: #4f46e5; color: #fff; border: none; border-radius: 10px;
@@ -70,19 +84,42 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 
 .selected-summary {
   font-size: 13px; color: #475569;
-  background: #f8fafc; padding: 8px 12px; border-radius: 8px;
-  border: 1px dashed #cbd5e1;
+  background: #f8fafc; padding: 10px 12px; border-radius: 8px;
+  border: 1px dashed #cbd5e1; line-height: 1.6;
 }
+.selected-summary .group { display: inline-block; margin-right: 12px; }
 .selected-summary strong { color: #1e293b; }
+.selected-summary .empty-mark { color: #94a3b8; }
+
+.budget-info { font-size: 11px; color: #64748b; margin-top: 6px; }
+.budget-info code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-size: 11px; }
 
 .criteria-panel {
-  margin: 14px 0; padding: 14px 16px;
+  margin: 14px 0; padding: 16px 18px;
   background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
   border: 1px solid #dbeafe; border-radius: 12px;
-  font-size: 13px; color: #1e3a8a; line-height: 1.65;
+  font-size: 13px; color: #1e3a8a; line-height: 1.7;
 }
-.criteria-panel .ctitle { font-weight: 700; color: #1e3a8a; margin-bottom: 4px; display: block; }
+.criteria-panel .ctitle { font-weight: 700; color: #1e3a8a; margin-bottom: 6px; display: block; font-size: 14px; }
 .criteria-panel code { background: #dbeafe; padding: 1px 6px; border-radius: 4px; font-size: 12px; color: #1e40af; }
+.criteria-panel .phase { display: inline-block; background: #4f46e5; color: white; padding: 1px 7px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 4px; }
+
+.scoring-table {
+  margin-top: 8px; border-collapse: collapse; width: 100%; font-size: 12px;
+}
+.scoring-table td {
+  padding: 4px 8px; border-bottom: 1px solid #dbeafe;
+}
+.scoring-table td:nth-child(1) { width: 30px; }
+.scoring-table td:nth-child(3) { text-align: right; color: #1e40af; font-weight: 600; white-space: nowrap; }
+
+.proxy-status {
+  margin-top: 10px; padding: 8px 12px; border-radius: 6px;
+  font-size: 12px;
+}
+.proxy-status.ok { background: #d1fae5; color: #065f46; }
+.proxy-status.disabled { background: #fef3c7; color: #92400e; }
+.proxy-status code { background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 3px; font-size: 11px; }
 
 .status {
   padding: 10px 14px; background: #fef3c7; border-radius: 8px;
@@ -91,6 +128,7 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 .status.show { display: block; }
 .status.error { background: #fee2e2; color: #991b1b; }
 .status.success { background: #d1fae5; color: #065f46; }
+.status.phase { background: #e0e7ff; color: #3730a3; }
 
 .results-header {
   display: flex; justify-content: space-between; align-items: center;
@@ -131,14 +169,32 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   color: #fff;
 }
+.score-pill.partial { background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%); }
 
 .tag-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
 .tag { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 4px; font-weight: 500; }
 .tag-cat { background: #fff7ed; color: #c2410c; }
 .tag-src { background: #ede9fe; color: #5b21b6; }
+.tag-naver { background: #d1fae5; color: #047857; }
+.tag-pending { background: #f1f5f9; color: #94a3b8; animation: pulse 1.5s infinite; }
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
 
 .card-addr { font-size: 12px; color: #475569; margin: 0 0 4px; line-height: 1.4; }
 .card-meta { font-size: 11px; color: #94a3b8; margin: 0 0 10px; }
+
+.naver-stats {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfeff 100%);
+  border: 1px solid #bbf7d0; border-radius: 8px;
+  padding: 8px 10px; margin: 8px 0;
+  font-size: 12px;
+}
+.naver-stats .stat { color: #047857; font-weight: 500; }
+.naver-stats .stat strong { color: #064e3b; }
+.naver-blog-title { font-size: 11px; color: #64748b; margin-top: 4px; font-style: italic; }
 
 .breakdown {
   background: #f8fafc; border-radius: 8px; padding: 8px 10px;
@@ -150,6 +206,7 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 .breakdown-list .pos { color: #059669; font-weight: 500; }
 .breakdown-list .neg { color: #dc2626; font-weight: 500; }
 .breakdown-list .neutral { color: #94a3b8; }
+.breakdown-list .naver { color: #047857; font-weight: 600; }
 
 .card-link {
   display: inline-flex; align-items: center; gap: 4px;
@@ -192,8 +249,8 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 <body>
 <div class="container">
   <header>
-    <h1>🎯 LunmeCHU <span class="badge">v4 · 자유 입력 큐레이션</span></h1>
-    <p class="subtitle">지역 + 음식 + 목적 — 무엇이든 자유롭게 입력하세요. 칩은 빠른 예시일 뿐입니다.</p>
+    <h1>🎯 LunmeCHU <span class="badge">v6 · 네이버 인기도 통합</span></h1>
+    <p class="subtitle">카카오맵 발견 + 네이버 검증 = 진짜 맛집 큐레이션</p>
   </header>
 
   <div id="configWarning" class="config-warning">
@@ -203,69 +260,80 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
   <!-- 1. 지역 -->
   <div class="panel">
     <div class="panel-header">
-      <p class="panel-title">📍 지역</p>
-      <span class="panel-hint">자유 입력 + 예시 클릭</span>
+      <p class="panel-title">📍 지역 (여러 개 가능)</p>
+      <span class="panel-hint">Enter / 콤마(,)로 태그 추가, ⌫로 삭제</span>
     </div>
-    <input type="text" id="regionInput" class="text-input" placeholder="예: 강남역, 홍대입구역, 충무로, 망원동, 한남동..." autofocus>
-    <div class="suggestions-label">자주 쓰는 예시</div>
+    <div class="multi-input" id="regionInputBox">
+      <input type="text" class="multi-input-field" id="regionInput" placeholder="예: 해운대, 광안리, 망원동..." autofocus>
+    </div>
+    <div class="suggestions-label">예시 (클릭 시 태그 추가)</div>
     <div class="chip-row" id="regionChips">
-      <span class="chip" data-region="강남역">강남역</span>
-      <span class="chip" data-region="홍대입구역">홍대입구역</span>
-      <span class="chip" data-region="성수동">성수동</span>
-      <span class="chip" data-region="판교역">판교역</span>
-      <span class="chip" data-region="여의도역">여의도역</span>
-      <span class="chip" data-region="잠실역">잠실역</span>
-      <span class="chip" data-region="시청역">시청역</span>
-      <span class="chip" data-region="충무로">충무로</span>
-      <span class="chip" data-region="망원동">망원동</span>
-      <span class="chip" data-region="한남동">한남동</span>
-      <span class="chip" data-region="이태원">이태원</span>
-      <span class="chip" data-region="합정">합정</span>
+      <span class="chip" data-value="강남역">강남역</span>
+      <span class="chip" data-value="홍대입구역">홍대입구역</span>
+      <span class="chip" data-value="성수동">성수동</span>
+      <span class="chip" data-value="판교역">판교역</span>
+      <span class="chip" data-value="여의도역">여의도역</span>
+      <span class="chip" data-value="잠실역">잠실역</span>
+      <span class="chip" data-value="시청역">시청역</span>
+      <span class="chip" data-value="충무로">충무로</span>
+      <span class="chip" data-value="망원동">망원동</span>
+      <span class="chip" data-value="한남동">한남동</span>
+      <span class="chip" data-value="이태원">이태원</span>
+      <span class="chip" data-value="합정">합정</span>
+      <span class="chip" data-value="해운대">해운대</span>
+      <span class="chip" data-value="광안리">광안리</span>
     </div>
   </div>
 
   <!-- 2. 음식 -->
   <div class="panel">
     <div class="panel-header">
-      <p class="panel-title">🍽️ 음식</p>
-      <span class="panel-hint">자유 입력 (예: 비건, 오마카세, 라멘) + 예시 클릭</span>
+      <p class="panel-title">🍽️ 음식 (여러 개 가능)</p>
+      <span class="panel-hint">자유 입력 + 예시 클릭</span>
     </div>
-    <input type="text" id="cuisineInput" class="text-input" placeholder="음식 종류·메뉴·스타일 무엇이든...">
-    <div id="cuisineMatchBadge"></div>
-    <div class="suggestions-label">예시 (클릭 시 자동 채움)</div>
+    <div class="multi-input" id="cuisineInputBox">
+      <input type="text" class="multi-input-field" id="cuisineInput" placeholder="예: 한식, 일식, 비건...">
+    </div>
+    <div class="suggestions-label">예시</div>
     <div class="chip-row" id="cuisineChips"></div>
   </div>
 
   <!-- 3. 목적 -->
   <div class="panel">
     <div class="panel-header">
-      <p class="panel-title">🤝 만남의 목적·분위기</p>
-      <span class="panel-hint">자유 입력 (예: 조용한, 야외 테라스, 노포) + 예시 클릭</span>
+      <p class="panel-title">🤝 목적·분위기 (여러 개 가능)</p>
+      <span class="panel-hint">자유 입력 + 예시 클릭</span>
     </div>
-    <input type="text" id="purposeInput" class="text-input" placeholder="목적·분위기·상황 무엇이든...">
-    <div id="purposeMatchBadge"></div>
-    <div class="suggestions-label">예시 (클릭 시 자동 채움)</div>
+    <div class="multi-input" id="purposeInputBox">
+      <input type="text" class="multi-input-field" id="purposeInput" placeholder="예: 친구모임, 오마카세, 야외...">
+    </div>
+    <div class="suggestions-label">예시</div>
     <div class="chip-row" id="purposeChips"></div>
   </div>
 
   <!-- 검색 -->
   <div class="panel">
-    <div class="selected-summary" id="selectedSummary">
-      세 칸을 모두 채워주세요
-    </div>
-    <div class="search-action" style="margin-top: 12px;">
+    <div class="selected-summary" id="selectedSummary">세 변수에 최소 하나씩 입력해주세요</div>
+    <div class="budget-info" id="budgetInfo"></div>
+    <div style="margin-top: 12px;">
       <button id="searchBtn" disabled>큐레이션 시작 →</button>
     </div>
   </div>
 
   <div class="criteria-panel">
-    <span class="ctitle">🧮 스코어링 알고리즘</span>
-    입력한 음식·목적이 <strong>사전 등록 키워드와 일치하면 자동으로 9~10개 변형으로 확장</strong>해서 카카오맵에 호출하고, <strong>새로운 단어면 그대로 3개 조합</strong>으로 검색합니다.<br>
-    · <code>등장 횟수 × 3점</code> (여러 변형에서 잡힐수록 가산)<br>
-    · <code>음식 카테고리 일치 시 +5점</code><br>
-    · <code>가게명에 목적 키워드 포함 시 +3점/개</code><br>
-    · <code>주소가 입력 지역과 안 맞으면 -10점</code><br>
-    각 카드 하단 <strong>"점수 산정 근거"</strong>에 상세 내역 표시.
+    <span class="ctitle">🧮 v6 알고리즘 (2단계 진행 + 7가지 점수 항목)</span>
+    <div><span class="phase">Phase 1</span> 카카오맵에 변수 조합으로 다중 호출 → 후보 수집 (~30~50곳)</div>
+    <div><span class="phase">Phase 2</span> 상위 20곳을 네이버에 조회 → 블로그·카페·뉴스 글 수로 인기도 검증</div>
+    <table class="scoring-table">
+      <tr><td>📝</td><td>네이버 블로그 글 수 <code>log10(n+1) × 8</code></td><td>최대 ~32점</td></tr>
+      <tr><td>💬</td><td>네이버 카페 글 수 <code>log10(n+1) × 4</code></td><td>최대 ~16점</td></tr>
+      <tr><td>📰</td><td>네이버 뉴스 결과 수 <code>log10(n+1) × 3</code></td><td>최대 ~9점</td></tr>
+      <tr><td>🔁</td><td>카카오맵 등장 횟수 <code>× 3</code></td><td>최대 ~30점</td></tr>
+      <tr><td>🏷️</td><td>음식 카테고리 매치 수 <code>× 5</code></td><td>최대 ~15점</td></tr>
+      <tr><td>✨</td><td>이름에 목적 부스트 단어 수 <code>× 3</code></td><td>최대 ~12점</td></tr>
+      <tr><td>📍</td><td>지역 매치 (없으면 -10)</td><td>±10점</td></tr>
+    </table>
+    <div id="proxyStatus" class="proxy-status disabled" style="display:none;"></div>
   </div>
 
   <div id="status" class="status"></div>
@@ -285,8 +353,18 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 </div>
 
 <script>
-// ===== 사전 등록 키워드 (자동 확장용) =====
+// ===========================================================
+// 설정 — 워커 배포 후 아래 URL을 실제 워커 URL로 교체하세요
+// 예: "https://lunmechu-naver-proxy.tilthend.workers.dev"
+// ===========================================================
+const NAVER_PROXY_URL = "https://sweet-dawn-f948.kjkintheworld.workers.dev";
 
+// 인기도 검증할 상위 N곳 (워커 호출 비용 제한)
+const ENRICH_TOP_N = 20;
+
+// ===========================================================
+// 사전 등록 키워드
+// ===========================================================
 const CUISINE_PRESETS = [
   { label: "한식", keywords: ["한식", "한정식", "백반"], categoryMatch: ["한식"] },
   { label: "일식", keywords: ["일식", "초밥", "라멘", "오마카세"], categoryMatch: ["일식", "일본"] },
@@ -323,21 +401,31 @@ const PURPOSE_PRESETS = [
   { label: "신상", modifiers: ["신상", "핫플", "오픈"], nameBoosts: [] }
 ];
 
-// ===== 상태 =====
-
+// ===========================================================
+// 상태
+// ===========================================================
 const STATE = {
-  region: "",
-  cuisine: "",
-  purpose: "",
-  ranked: [],
-  page: 0
+  regions: [], cuisines: [], purposes: [],
+  ranked: [], page: 0
 };
 const PAGE_SIZE = 5;
+const MAX_QUERIES = 25;
 let kakaoReady = false;
 
-// ===== UI 렌더 =====
+// ===========================================================
+// 사전 매치 헬퍼
+// ===========================================================
+function findCuisinePreset(text) { return CUISINE_PRESETS.find(c => c.label === (text || "").trim()); }
+function findPurposePreset(text) { return PURPOSE_PRESETS.find(p => p.label === (text || "").trim()); }
 
-function renderChips() {
+function isProxyConfigured() {
+  return NAVER_PROXY_URL && !NAVER_PROXY_URL.includes("PASTE_YOUR_WORKER_URL");
+}
+
+// ===========================================================
+// UI 렌더
+// ===========================================================
+function renderSuggestionChips() {
   document.getElementById("cuisineChips").innerHTML = CUISINE_PRESETS.map(c =>
     `<span class="chip" data-value="${escapeAttr(c.label)}">${escapeHtml(c.label)}</span>`
   ).join("");
@@ -346,50 +434,77 @@ function renderChips() {
   ).join("");
 }
 
-function findCuisinePreset(text) {
-  const t = (text || "").trim();
-  return CUISINE_PRESETS.find(c => c.label === t);
-}
-function findPurposePreset(text) {
-  const t = (text || "").trim();
-  return PURPOSE_PRESETS.find(p => p.label === t);
-}
-
-function updateMatchBadges() {
-  const cBadge = document.getElementById("cuisineMatchBadge");
-  if (!STATE.cuisine) { cBadge.innerHTML = ""; }
-  else if (findCuisinePreset(STATE.cuisine)) {
-    cBadge.innerHTML = `<span class="match-badge">✨ 사전 등록 인식 → 자동 키워드 확장</span>`;
+function renderProxyStatus() {
+  const el = document.getElementById("proxyStatus");
+  el.style.display = "block";
+  if (isProxyConfigured()) {
+    el.className = "proxy-status ok";
+    el.innerHTML = `✓ 네이버 인기도 검증 활성화 — 워커: <code>${escapeHtml(NAVER_PROXY_URL)}</code>`;
   } else {
-    cBadge.innerHTML = `<span class="match-badge freeform">📝 자유 입력 → "${escapeHtml(STATE.cuisine)}" 그대로 검색</span>`;
-  }
-
-  const pBadge = document.getElementById("purposeMatchBadge");
-  if (!STATE.purpose) { pBadge.innerHTML = ""; }
-  else if (findPurposePreset(STATE.purpose)) {
-    pBadge.innerHTML = `<span class="match-badge">✨ 사전 등록 인식 → 자동 키워드 확장</span>`;
-  } else {
-    pBadge.innerHTML = `<span class="match-badge freeform">📝 자유 입력 → "${escapeHtml(STATE.purpose)}" 그대로 검색</span>`;
+    el.className = "proxy-status disabled";
+    el.innerHTML = `⚠️ 네이버 인기도 검증 비활성화 — HTML의 <code>NAVER_PROXY_URL</code>을 실제 워커 URL로 교체하면 자동 활성화됩니다.`;
   }
 }
 
-function updateSelectedSummary() {
-  const el = document.getElementById("selectedSummary");
-  const region = STATE.region || "<지역>";
-  const cuisine = STATE.cuisine || "<음식>";
-  const purpose = STATE.purpose || "<목적>";
-  el.innerHTML = `<strong>${escapeHtml(region)}</strong> · <strong>${escapeHtml(cuisine)}</strong> · <strong>${escapeHtml(purpose)}</strong>`;
-  document.getElementById("searchBtn").disabled = !(STATE.region && STATE.cuisine && STATE.purpose);
-}
-
-function updateChipActive(containerId, value) {
-  document.querySelectorAll(`#${containerId} .chip`).forEach(c => {
-    c.classList.toggle("active", c.dataset.value === value || c.dataset.region === value);
+function renderTags(field) {
+  const arr = STATE[field];
+  const boxId = field === "regions" ? "regionInputBox" : field === "cuisines" ? "cuisineInputBox" : "purposeInputBox";
+  const inputId = field === "regions" ? "regionInput" : field === "cuisines" ? "cuisineInput" : "purposeInput";
+  const box = document.getElementById(boxId);
+  const input = document.getElementById(inputId);
+  box.querySelectorAll(".input-tag").forEach(t => t.remove());
+  arr.forEach((value, idx) => {
+    const isPreset = field === "cuisines" ? findCuisinePreset(value) :
+                     field === "purposes" ? findPurposePreset(value) : false;
+    const tag = document.createElement("span");
+    tag.className = "input-tag" + (isPreset ? " preset" : "");
+    tag.innerHTML = `${isPreset ? "✨" : ""}${escapeHtml(value)}<button type="button" data-field="${field}" data-idx="${idx}">×</button>`;
+    box.insertBefore(tag, input);
+  });
+  const chipContainer = field === "regions" ? "regionChips" : field === "cuisines" ? "cuisineChips" : "purposeChips";
+  document.querySelectorAll(`#${chipContainer} .chip`).forEach(c => {
+    c.classList.toggle("active", arr.includes(c.dataset.value));
   });
 }
 
-// ===== 카카오 SDK =====
+function updateSelectedSummary() {
+  const fmt = (arr, label) => {
+    if (arr.length === 0) return `<span class="empty-mark">&lt;${label}&gt;</span>`;
+    return arr.map(v => `<strong>${escapeHtml(v)}</strong>`).join(", ");
+  };
+  document.getElementById("selectedSummary").innerHTML = `
+    <span class="group">📍 ${fmt(STATE.regions, "지역")}</span>
+    <span class="group">🍽️ ${fmt(STATE.cuisines, "음식")}</span>
+    <span class="group">🤝 ${fmt(STATE.purposes, "목적")}</span>
+  `;
+  const ctx = STATE.regions.length && STATE.cuisines.length && STATE.purposes.length ?
+    buildQueryContext(STATE.regions, STATE.cuisines, STATE.purposes) : null;
+  const enrichNote = isProxyConfigured() ? ` + 네이버 인기도 ${ENRICH_TOP_N}곳` : "";
+  const budget = ctx ? `예상 호출: <code>${ctx.queries.length}회</code>${enrichNote} (병렬, ${(ctx.queries.length / 5 + (isProxyConfigured() ? 3 : 0)).toFixed(1)}초 내외)` : "";
+  document.getElementById("budgetInfo").innerHTML = budget;
+  document.getElementById("searchBtn").disabled =
+    !(STATE.regions.length && STATE.cuisines.length && STATE.purposes.length);
+}
 
+// ===========================================================
+// 태그 추가/삭제
+// ===========================================================
+function addTag(field, value) {
+  const v = (value || "").trim();
+  if (!v || STATE[field].includes(v)) return;
+  STATE[field].push(v);
+  renderTags(field);
+  updateSelectedSummary();
+}
+function removeTag(field, idx) {
+  STATE[field].splice(idx, 1);
+  renderTags(field);
+  updateSelectedSummary();
+}
+
+// ===========================================================
+// 카카오 SDK
+// ===========================================================
 function initKakao() {
   if (typeof kakao === "undefined" || !kakao.maps) {
     document.getElementById("configWarning").classList.add("show");
@@ -397,137 +512,203 @@ function initKakao() {
   }
   kakao.maps.load(() => { kakaoReady = true; });
 }
-
 function searchKeywordViaSdk(keyword) {
   return new Promise((resolve) => {
     if (!kakaoReady) { resolve([]); return; }
     const ps = new kakao.maps.services.Places();
     ps.keywordSearch(keyword, (data, status) => {
-      if (status === kakao.maps.services.Status.OK) resolve(data);
-      else resolve([]);
+      resolve(status === kakao.maps.services.Status.OK ? data : []);
     }, { size: 15 });
   });
 }
 
-// ===== 알고리즘 =====
-
-function expandInputs(region, cuisineRaw, purposeRaw) {
-  const cuisinePreset = findCuisinePreset(cuisineRaw);
-  const purposePreset = findPurposePreset(purposeRaw);
-
-  const cuisineKws = cuisinePreset ? cuisinePreset.keywords : [cuisineRaw];
-  const purposeKws = purposePreset ? purposePreset.modifiers : [purposeRaw];
-
-  const cuisineCategoryMatch = cuisinePreset ? cuisinePreset.categoryMatch : [cuisineRaw];
-  const purposeNameBoosts = purposePreset ? purposePreset.nameBoosts : [purposeRaw];
-
+// ===========================================================
+// 알고리즘
+// ===========================================================
+function buildQueryContext(regions, cuisines, purposes) {
+  const cuisineExpansions = cuisines.map(c => {
+    const preset = findCuisinePreset(c);
+    return {
+      input: c,
+      keywords: preset ? preset.keywords : [c],
+      categoryMatch: preset ? preset.categoryMatch : [c]
+    };
+  });
+  const purposeExpansions = purposes.map(p => {
+    const preset = findPurposePreset(p);
+    return {
+      input: p,
+      modifiers: preset ? preset.modifiers : [p],
+      nameBoosts: preset ? preset.nameBoosts : [p]
+    };
+  });
+  const totalCombos = regions.length * cuisines.length * purposes.length;
+  const cuiTopK = totalCombos === 1 ? 3 : totalCombos <= 4 ? 2 : 1;
+  const purTopK = totalCombos === 1 ? 3 : totalCombos <= 4 ? 2 : 1;
   const queries = [];
-  for (const c of cuisineKws.slice(0, 3)) {
-    for (const p of purposeKws.slice(0, 3)) {
-      queries.push(`${region} ${c} ${p}`);
+  const seen = new Set();
+  for (const region of regions) {
+    for (const cui of cuisineExpansions) {
+      for (const pur of purposeExpansions) {
+        for (const cKw of cui.keywords.slice(0, cuiTopK)) {
+          for (const pKw of pur.modifiers.slice(0, purTopK)) {
+            const text = `${region} ${cKw} ${pKw}`;
+            if (!seen.has(text) && queries.length < MAX_QUERIES) {
+              seen.add(text); queries.push(text);
+            }
+          }
+        }
+      }
+      const baseText = `${region} ${cui.keywords[0]}`;
+      if (!seen.has(baseText) && queries.length < MAX_QUERIES) {
+        seen.add(baseText); queries.push(baseText);
+      }
     }
   }
-  // 베이스라인: 음식 키워드만
-  queries.push(`${region} ${cuisineKws[0]}`);
-
-  return {
-    queries,
-    cuisineLabel: cuisinePreset ? cuisinePreset.label : cuisineRaw,
-    cuisineCategoryMatch,
-    purposeNameBoosts,
-    isCuisinePreset: !!cuisinePreset,
-    isPurposePreset: !!purposePreset
-  };
+  return { queries, regions, cuisineExpansions, purposeExpansions };
 }
 
-async function runCuration(region, cuisineRaw, purposeRaw) {
-  const ctx = expandInputs(region, cuisineRaw, purposeRaw);
-  const results = await Promise.all(ctx.queries.map(q => searchKeywordViaSdk(q)));
+function scoreCandidate(candidate, ctx) {
+  const breakdown = [];
+  let score = 0;
+  const { place, hits } = candidate;
 
+  // 1) 등장 횟수
+  const freqScore = hits.length * 3;
+  breakdown.push({ kind: "pos", text: `🔁 카카오맵 ${hits.length}회 등장 (+${freqScore})` });
+  score += freqScore;
+
+  // 2) 카테고리 매치
+  const categoryName = place.category_name || "";
+  const matchedCuisines = ctx.cuisineExpansions.filter(cui =>
+    cui.categoryMatch.some(c => categoryName.includes(c))
+  );
+  if (matchedCuisines.length > 0) {
+    const labels = matchedCuisines.map(c => c.input);
+    const catScore = matchedCuisines.length * 5;
+    breakdown.push({ kind: "pos", text: `🏷️ [${labels.join(", ")}] 카테고리 매치 (+${catScore})` });
+    score += catScore;
+  } else {
+    breakdown.push({ kind: "neutral", text: `🏷️ 카테고리 미일치 (+0)` });
+  }
+
+  // 3) 이름 부스트
+  const allNameBoosts = [...new Set(ctx.purposeExpansions.flatMap(p => p.nameBoosts))];
+  const placeName = place.place_name || "";
+  const matchedBoosts = [...new Set(allNameBoosts.filter(b => placeName.includes(b)))];
+  if (matchedBoosts.length > 0) {
+    const boostScore = matchedBoosts.length * 3;
+    breakdown.push({ kind: "pos", text: `✨ 이름에 [${matchedBoosts.join(", ")}] (+${boostScore})` });
+    score += boostScore;
+  }
+
+  // 4) 지역 매치
+  const addr = (place.road_address_name || place.address_name || "");
+  const matchedRegions = ctx.regions.filter(r => {
+    const stem = r.replace(/(역|동|구|로|길)$/g, "").substring(0, 2);
+    return stem && addr.includes(stem);
+  });
+  if (matchedRegions.length > 0) {
+    breakdown.push({ kind: "pos", text: `📍 지역 [${matchedRegions.join(", ")}] 매치 (통과)` });
+  } else {
+    breakdown.push({ kind: "neg", text: `📍 입력 지역과 안 맞음 (-10)` });
+    score -= 10;
+  }
+
+  // 5~7) 네이버 시그널 (있으면)
+  if (candidate.naver) {
+    const n = candidate.naver;
+    const blogScore = Math.round(Math.log10((n.blogCount || 0) + 1) * 8);
+    const cafeScore = Math.round(Math.log10((n.cafeCount || 0) + 1) * 4);
+    const newsScore = Math.round(Math.log10((n.newsCount || 0) + 1) * 3);
+    if (blogScore > 0) {
+      breakdown.push({ kind: "naver", text: `📝 네이버 블로그 ${n.blogCount.toLocaleString()}건 (+${blogScore})` });
+      score += blogScore;
+    }
+    if (cafeScore > 0) {
+      breakdown.push({ kind: "naver", text: `💬 네이버 카페 ${n.cafeCount.toLocaleString()}건 (+${cafeScore})` });
+      score += cafeScore;
+    }
+    if (newsScore > 0) {
+      breakdown.push({ kind: "naver", text: `📰 네이버 뉴스 ${n.newsCount.toLocaleString()}건 (+${newsScore})` });
+      score += newsScore;
+    }
+    if (blogScore + cafeScore + newsScore === 0) {
+      breakdown.push({ kind: "neutral", text: `📝 네이버 검색 결과 없음 (+0)` });
+    }
+  }
+
+  return { ...candidate, score, breakdown };
+}
+
+async function runKakaoMapPhase(regions, cuisines, purposes) {
+  const ctx = buildQueryContext(regions, cuisines, purposes);
+  const results = await Promise.all(ctx.queries.map(q => searchKeywordViaSdk(q)));
   const map = new Map();
   results.forEach((places, idx) => {
     const queryText = ctx.queries[idx];
     places.forEach(p => {
-      const id = p.id;
-      if (!map.has(id)) {
-        map.set(id, { place: p, hits: [] });
-      }
-      map.get(id).hits.push(queryText);
+      if (!map.has(p.id)) map.set(p.id, { place: p, hits: [] });
+      map.get(p.id).hits.push(queryText);
     });
   });
-
-  const candidates = [...map.values()].map(({ place, hits }) => {
-    const breakdown = [];
-    let score = 0;
-
-    // 1) 등장 횟수
-    const freqScore = hits.length * 3;
-    breakdown.push({ kind: "pos", text: `${hits.length}회 등장 (+${freqScore})` });
-    score += freqScore;
-
-    // 2) 카테고리 매치
-    const categoryName = place.category_name || "";
-    const matchedCat = ctx.cuisineCategoryMatch.find(c => categoryName.includes(c));
-    if (matchedCat) {
-      const desc = ctx.isCuisinePreset
-        ? `${ctx.cuisineLabel} 카테고리 일치 (+5)`
-        : `카테고리에 "${matchedCat}" 포함 (+5)`;
-      breakdown.push({ kind: "pos", text: desc });
-      score += 5;
-    } else {
-      breakdown.push({ kind: "neutral", text: `카테고리 미일치 (+0)` });
-    }
-
-    // 3) 가게명 부스트
-    const placeName = place.place_name || "";
-    const matchedBoosts = ctx.purposeNameBoosts.filter(b => placeName.includes(b));
-    if (matchedBoosts.length > 0) {
-      const boostScore = matchedBoosts.length * 3;
-      breakdown.push({
-        kind: "pos",
-        text: `이름에 [${matchedBoosts.join(", ")}] 포함 (+${boostScore})`
-      });
-      score += boostScore;
-    }
-
-    // 4) 지역 매치
-    const addr = (place.road_address_name || place.address_name || "");
-    const regionStem = region.replace(/(역|동|구|로|길)$/g, "").substring(0, 2);
-    const regionMatch = !regionStem || addr.includes(regionStem);
-    if (!regionMatch) {
-      breakdown.push({ kind: "neg", text: `주소가 "${region}" 지역과 안 맞음 (-10)` });
-      score -= 10;
-    } else if (regionStem) {
-      breakdown.push({ kind: "pos", text: `지역 일치 (통과)` });
-    }
-
-    return { place, score, breakdown, hits };
-  });
-
-  return candidates.sort((a, b) => b.score - a.score);
+  const candidates = [...map.values()].map(c => scoreCandidate(c, ctx));
+  candidates.sort((a, b) => b.score - a.score);
+  return { candidates, ctx };
 }
 
-// ===== 결과 렌더 =====
+async function runNaverEnrichmentPhase(candidates, ctx) {
+  if (!isProxyConfigured() || candidates.length === 0) return candidates;
+  const topN = candidates.slice(0, ENRICH_TOP_N);
+  const region = ctx.regions[0] || "";
+  try {
+    const res = await fetch(NAVER_PROXY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        places: topN.map(c => ({ name: c.place.place_name, region }))
+      })
+    });
+    if (!res.ok) throw new Error(`Worker ${res.status}`);
+    const data = await res.json();
+    const naverMap = new Map();
+    (data.results || []).forEach(r => naverMap.set(r.name, r));
+    // 인리치 적용 + 재스코어링
+    const enriched = candidates.map((c, idx) => {
+      if (idx < ENRICH_TOP_N) {
+        const naver = naverMap.get(c.place.place_name);
+        if (naver) return scoreCandidate({ ...c, naver }, ctx);
+      }
+      return c;
+    });
+    enriched.sort((a, b) => b.score - a.score);
+    return enriched;
+  } catch (e) {
+    console.error("Naver enrichment failed:", e);
+    setStatus(`⚠️ 네이버 인기도 조회 실패 (${e.message}). 카카오맵 결과만 표시합니다.`, "error");
+    return candidates;
+  }
+}
 
-function renderResults() {
+// ===========================================================
+// 결과 렌더
+// ===========================================================
+function renderResults(enrichmentPending = false) {
   const panel = document.getElementById("resultsPanel");
   const cardsEl = document.getElementById("resultCards");
   const countEl = document.getElementById("resultsCount");
-
   panel.style.display = "block";
   const total = STATE.ranked.length;
   if (total === 0) {
-    cardsEl.innerHTML = '<div class="empty">조건에 맞는 가게를 찾지 못했어요.<br>지역·음식·목적 조합을 바꿔보세요.</div>';
+    cardsEl.innerHTML = '<div class="empty">조건에 맞는 가게를 찾지 못했어요.<br>변수 조합을 바꿔보세요.</div>';
     countEl.textContent = "0곳";
     updatePagination(0, 0);
     return;
   }
-
   const start = STATE.page * PAGE_SIZE;
   const end = Math.min(start + PAGE_SIZE, total);
   const slice = STATE.ranked.slice(start, end);
   countEl.textContent = `${start + 1}–${end}위 / 총 ${total}곳`;
-
   cardsEl.innerHTML = slice.map((entry, i) => {
     const rank = start + i + 1;
     const rankClass = rank === 1 ? "top1" : rank === 2 ? "top2" : rank === 3 ? "top3" : "other";
@@ -535,21 +716,31 @@ function renderResults() {
     const shortCat = (p.category_name || "").split(">").slice(-1)[0].trim() || "";
     const addr = p.road_address_name || p.address_name || "";
     const phone = p.phone || "";
+    const isEnriched = !!entry.naver;
+    const isPending = enrichmentPending && (start + i) < ENRICH_TOP_N && !isEnriched;
+    const naverStats = isEnriched ? `
+      <div class="naver-stats">
+        <span class="stat">📝 블로그 <strong>${entry.naver.blogCount.toLocaleString()}</strong>건</span>
+        <span class="stat">💬 카페 <strong>${entry.naver.cafeCount.toLocaleString()}</strong>건</span>
+        <span class="stat">📰 뉴스 <strong>${entry.naver.newsCount.toLocaleString()}</strong>건</span>
+        ${entry.naver.topBlog ? `<div class="naver-blog-title" style="width:100%;">최근 블로그: "${escapeHtml(entry.naver.topBlog).substring(0, 80)}..."</div>` : ""}
+      </div>` : "";
     return `
       <div class="card">
         <div class="rank-badge ${rankClass}">${rank}</div>
         <div class="card-header">
-          <div>
-            <div class="card-name">${escapeHtml(p.place_name)}</div>
-          </div>
-          <span class="score-pill">${entry.score}점</span>
+          <div><div class="card-name">${escapeHtml(p.place_name)}</div></div>
+          <span class="score-pill ${isEnriched || (start+i)>=ENRICH_TOP_N ? '' : 'partial'}">${entry.score}점</span>
         </div>
         <div class="tag-row">
           ${shortCat ? `<span class="tag tag-cat">${escapeHtml(shortCat)}</span>` : ""}
           <span class="tag tag-src">${entry.hits.length}개 키워드 매치</span>
+          ${isEnriched ? `<span class="tag tag-naver">📝 네이버 검증</span>` : ""}
+          ${isPending ? `<span class="tag tag-pending">⏳ 네이버 조회중...</span>` : ""}
         </div>
         ${addr ? `<div class="card-addr">📍 ${escapeHtml(addr)}</div>` : ""}
         ${phone ? `<div class="card-meta">☎ ${escapeHtml(phone)}</div>` : ""}
+        ${naverStats}
         <div class="breakdown">
           <div class="breakdown-title">점수 산정 근거</div>
           <ul class="breakdown-list">
@@ -560,7 +751,6 @@ function renderResults() {
       </div>
     `;
   }).join("");
-
   updatePagination(STATE.page, Math.ceil(total / PAGE_SIZE));
 }
 
@@ -573,8 +763,7 @@ function updatePagination(page, totalPages) {
 
 function showSkeletons() {
   document.getElementById("resultsPanel").style.display = "block";
-  const cardsEl = document.getElementById("resultCards");
-  cardsEl.innerHTML = Array.from({length: 5}).map(() => '<div class="skeleton"></div>').join("");
+  document.getElementById("resultCards").innerHTML = Array.from({length: 5}).map(() => '<div class="skeleton"></div>').join("");
   document.getElementById("resultsCount").textContent = "큐레이션 중...";
 }
 
@@ -586,127 +775,109 @@ function setStatus(msg, type) {
 }
 
 function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 function escapeAttr(s) { return escapeHtml(s); }
 
-// ===== 검색 실행 =====
-
+// ===========================================================
+// 검색 (2 phase)
+// ===========================================================
 async function runSearch() {
-  if (!STATE.region || !STATE.cuisine || !STATE.purpose) {
-    setStatus("지역·음식·목적을 모두 입력해주세요.", "error");
-    return;
+  if (!STATE.regions.length || !STATE.cuisines.length || !STATE.purposes.length) {
+    setStatus("세 변수에 최소 하나씩 입력해주세요.", "error"); return;
   }
   if (!kakaoReady) {
-    setStatus("카카오 SDK 준비 중이에요. 잠시 후 다시 시도해주세요.", "error");
-    return;
+    setStatus("카카오 SDK 준비 중이에요. 잠시 후 다시 시도해주세요.", "error"); return;
   }
-
-  setStatus(`"${STATE.region} · ${STATE.cuisine} · ${STATE.purpose}" 큐레이션 중...`, "");
-
   const btn = document.getElementById("searchBtn");
-  btn.disabled = true;
-  btn.textContent = "큐레이션 중...";
+  btn.disabled = true; btn.textContent = "큐레이션 중...";
   showSkeletons();
 
   const t0 = performance.now();
   try {
-    const ranked = await runCuration(STATE.region, STATE.cuisine, STATE.purpose);
-    STATE.ranked = ranked;
-    STATE.page = 0;
-    renderResults();
-    const elapsed = ((performance.now() - t0) / 1000).toFixed(1);
-    setStatus(`✓ ${ranked.length}곳 큐레이션 완료 (${elapsed}초)`, "success");
+    // Phase 1: 카카오맵
+    setStatus(`🔍 Phase 1/2: 카카오맵 검색 중... (${STATE.regions.length}×${STATE.cuisines.length}×${STATE.purposes.length} 조합)`, "phase");
+    const { candidates, ctx } = await runKakaoMapPhase(STATE.regions, STATE.cuisines, STATE.purposes);
+    STATE.ranked = candidates; STATE.page = 0;
+    renderResults(isProxyConfigured());
+    const t1 = ((performance.now() - t0) / 1000).toFixed(1);
+
+    // Phase 2: 네이버 인리치먼트 (옵션)
+    if (isProxyConfigured() && candidates.length > 0) {
+      setStatus(`🔎 Phase 2/2: 네이버 인기도 조회 중... (상위 ${Math.min(ENRICH_TOP_N, candidates.length)}곳)`, "phase");
+      const enriched = await runNaverEnrichmentPhase(candidates, ctx);
+      STATE.ranked = enriched;
+      renderResults(false);
+      const t2 = ((performance.now() - t0) / 1000).toFixed(1);
+      const enrichedCount = enriched.filter(e => e.naver).length;
+      setStatus(`✓ 완료: 카카오맵 ${candidates.length}곳, 네이버 검증 ${enrichedCount}곳 (총 ${t2}초)`, "success");
+    } else {
+      setStatus(`✓ 카카오맵 ${candidates.length}곳 (${t1}초) · 네이버 인기도 검증 비활성화 상태`, "success");
+    }
   } catch (e) {
     console.error(e);
-    setStatus("큐레이션 중 오류가 발생했어요. 다시 시도해주세요.", "error");
+    setStatus(`큐레이션 중 오류: ${e.message}`, "error");
   } finally {
-    btn.disabled = false;
-    btn.textContent = "큐레이션 시작 →";
+    btn.disabled = false; btn.textContent = "큐레이션 시작 →";
   }
 }
 
-// ===== 이벤트 바인딩 =====
+// ===========================================================
+// 이벤트 바인딩
+// ===========================================================
+function bindMultiInput(field, inputId, boxId, chipsId) {
+  const input = document.getElementById(inputId);
+  const box = document.getElementById(boxId);
+  box.addEventListener("click", e => { if (e.target === box) input.focus(); });
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const val = input.value.trim().replace(/,$/, "");
+      if (val) { addTag(field, val); input.value = ""; }
+      else if (e.key === "Enter" && !document.getElementById("searchBtn").disabled) runSearch();
+    } else if (e.key === "Backspace" && input.value === "" && STATE[field].length > 0) {
+      removeTag(field, STATE[field].length - 1);
+    }
+  });
+  input.addEventListener("input", () => {
+    if (input.value.includes(",")) {
+      input.value.split(",").map(s => s.trim()).filter(Boolean).forEach(p => addTag(field, p));
+      input.value = "";
+    }
+  });
+  box.addEventListener("click", e => {
+    const btn = e.target.closest("button[data-field]");
+    if (!btn) return;
+    removeTag(btn.dataset.field, parseInt(btn.dataset.idx, 10));
+  });
+  document.getElementById(chipsId).addEventListener("click", e => {
+    const chip = e.target.closest(".chip");
+    if (chip) addTag(field, chip.dataset.value);
+  });
+}
 
 function bindEvents() {
-  // 지역
-  const regionInput = document.getElementById("regionInput");
-  regionInput.addEventListener("input", e => {
-    STATE.region = e.target.value.trim();
-    updateChipActive("regionChips", STATE.region);
-    updateSelectedSummary();
-  });
-  document.getElementById("regionChips").addEventListener("click", e => {
-    const chip = e.target.closest(".chip");
-    if (!chip) return;
-    STATE.region = chip.dataset.region;
-    regionInput.value = STATE.region;
-    updateChipActive("regionChips", STATE.region);
-    updateSelectedSummary();
-  });
-
-  // 음식
-  const cuisineInput = document.getElementById("cuisineInput");
-  cuisineInput.addEventListener("input", e => {
-    STATE.cuisine = e.target.value.trim();
-    updateChipActive("cuisineChips", STATE.cuisine);
-    updateMatchBadges();
-    updateSelectedSummary();
-  });
-  document.getElementById("cuisineChips").addEventListener("click", e => {
-    const chip = e.target.closest(".chip");
-    if (!chip) return;
-    STATE.cuisine = chip.dataset.value;
-    cuisineInput.value = STATE.cuisine;
-    updateChipActive("cuisineChips", STATE.cuisine);
-    updateMatchBadges();
-    updateSelectedSummary();
-  });
-
-  // 목적
-  const purposeInput = document.getElementById("purposeInput");
-  purposeInput.addEventListener("input", e => {
-    STATE.purpose = e.target.value.trim();
-    updateChipActive("purposeChips", STATE.purpose);
-    updateMatchBadges();
-    updateSelectedSummary();
-  });
-  document.getElementById("purposeChips").addEventListener("click", e => {
-    const chip = e.target.closest(".chip");
-    if (!chip) return;
-    STATE.purpose = chip.dataset.value;
-    purposeInput.value = STATE.purpose;
-    updateChipActive("purposeChips", STATE.purpose);
-    updateMatchBadges();
-    updateSelectedSummary();
-  });
-
-  // 검색 버튼
+  bindMultiInput("regions", "regionInput", "regionInputBox", "regionChips");
+  bindMultiInput("cuisines", "cuisineInput", "cuisineInputBox", "cuisineChips");
+  bindMultiInput("purposes", "purposeInput", "purposeInputBox", "purposeChips");
   document.getElementById("searchBtn").addEventListener("click", runSearch);
-  [regionInput, cuisineInput, purposeInput].forEach(input => {
-    input.addEventListener("keydown", e => {
-      if (e.key === "Enter" && !document.getElementById("searchBtn").disabled) runSearch();
-    });
-  });
-
-  // 페이지네이션
   document.querySelectorAll(".page-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const dir = btn.dataset.dir;
       const totalPages = Math.ceil(STATE.ranked.length / PAGE_SIZE);
       if (dir === "prev" && STATE.page > 0) STATE.page -= 1;
       if (dir === "next" && STATE.page < totalPages - 1) STATE.page += 1;
-      renderResults();
+      renderResults(false);
     });
   });
 }
 
-// ===== 초기화 =====
-
 window.addEventListener("load", () => {
-  renderChips();
+  renderSuggestionChips();
+  renderProxyStatus();
   bindEvents();
   initKakao();
+  updateSelectedSummary();
 });
 </script>
 </body>
