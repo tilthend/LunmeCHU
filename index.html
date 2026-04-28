@@ -143,11 +143,33 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 .cards { display: flex; flex-direction: column; gap: 12px; }
 .card {
   position: relative;
-  padding: 14px 16px 14px 56px;
+  padding: 14px 110px 14px 56px;
   border: 1px solid #e2e8f0; border-radius: 12px;
   background: #fff; transition: all 0.15s;
+  min-height: 110px;
 }
 .card:hover { border-color: #c7d2fe; box-shadow: 0 2px 8px rgba(99,102,241,0.08); }
+.card-right {
+  position: absolute; top: 14px; right: 14px;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+}
+.card-image {
+  width: 84px; height: 84px;
+  object-fit: cover; border-radius: 8px;
+  background: #f1f5f9; display: block;
+  cursor: pointer; transition: transform 0.15s;
+}
+.card-image:hover { transform: scale(1.05); }
+.card-image-fallback {
+  width: 84px; height: 84px; border-radius: 8px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; opacity: 0.4;
+}
+@media (max-width: 600px) {
+  .card { padding-right: 90px; }
+  .card-image, .card-image-fallback { width: 64px; height: 64px; }
+}
 .rank-badge {
   position: absolute; left: 14px; top: 14px;
   width: 32px; height: 32px; border-radius: 50%;
@@ -249,7 +271,7 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
 <body>
 <div class="container">
   <header>
-    <h1>🎯 LunmeCHU <span class="badge">v6 · 네이버 인기도 통합</span></h1>
+    <h1>🎯 LunmeCHU <span class="badge">v7 · 사진 + 인기도 큐레이션</span></h1>
     <p class="subtitle">카카오맵 발견 + 네이버 검증 = 진짜 맛집 큐레이션</p>
   </header>
 
@@ -320,22 +342,6 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
     </div>
   </div>
 
-  <div class="criteria-panel">
-    <span class="ctitle">🧮 v6 알고리즘 (2단계 진행 + 7가지 점수 항목)</span>
-    <div><span class="phase">Phase 1</span> 카카오맵에 변수 조합으로 다중 호출 → 후보 수집 (~30~50곳)</div>
-    <div><span class="phase">Phase 2</span> 상위 20곳을 네이버에 조회 → 블로그·카페·뉴스 글 수로 인기도 검증</div>
-    <table class="scoring-table">
-      <tr><td>📝</td><td>네이버 블로그 글 수 <code>log10(n+1) × 8</code></td><td>최대 ~32점</td></tr>
-      <tr><td>💬</td><td>네이버 카페 글 수 <code>log10(n+1) × 4</code></td><td>최대 ~16점</td></tr>
-      <tr><td>📰</td><td>네이버 뉴스 결과 수 <code>log10(n+1) × 3</code></td><td>최대 ~9점</td></tr>
-      <tr><td>🔁</td><td>카카오맵 등장 횟수 <code>× 3</code></td><td>최대 ~30점</td></tr>
-      <tr><td>🏷️</td><td>음식 카테고리 매치 수 <code>× 5</code></td><td>최대 ~15점</td></tr>
-      <tr><td>✨</td><td>이름에 목적 부스트 단어 수 <code>× 3</code></td><td>최대 ~12점</td></tr>
-      <tr><td>📍</td><td>지역 매치 (없으면 -10)</td><td>±10점</td></tr>
-    </table>
-    <div id="proxyStatus" class="proxy-status disabled" style="display:none;"></div>
-  </div>
-
   <div id="status" class="status"></div>
 
   <!-- 결과 -->
@@ -350,6 +356,32 @@ h1 .badge { font-size: 12px; font-weight: 600; color: #4f46e5; background: #eef2
       <button class="page-btn" data-dir="next" disabled>다음 →</button>
     </div>
   </div>
+
+  <!-- 추천 알고리즘 설명 (페이지 최하단) -->
+  <details class="criteria-panel" id="criteriaPanel" style="margin-top: 28px;">
+    <summary style="cursor:pointer; font-weight:700; color:#1e3a8a; font-size:14px; outline:none;">
+      🧮 추천 알고리즘 자세히 보기 (클릭하여 펼치기)
+    </summary>
+    <div style="margin-top: 10px;">
+      <div><span class="phase">Phase 1</span> 카카오맵에 변수 조합으로 다중 호출 → 후보 수집 (~30~50곳)</div>
+      <div><span class="phase">Phase 2</span> 상위 20곳을 네이버에 조회 → 블로그·카페·뉴스 글 수 + 대표사진 추정</div>
+      <table class="scoring-table">
+        <tr><td>📝</td><td>네이버 블로그 글 수 <code>log10(n+1) × 12</code> ⬆️</td><td>최대 ~48점</td></tr>
+        <tr><td>💬</td><td>네이버 카페 글 수 <code>log10(n+1) × 6</code> ⬆️</td><td>최대 ~24점</td></tr>
+        <tr><td>📰</td><td>네이버 뉴스 결과 수 <code>log10(n+1) × 3</code></td><td>최대 ~9점</td></tr>
+        <tr><td>🔁</td><td>카카오맵 키워드 적합도 <code>min(hits, 5) × 2</code> ⬇️</td><td>최대 10점</td></tr>
+        <tr><td>🏷️</td><td>음식 카테고리 매치 수 <code>× 5</code></td><td>최대 ~15점</td></tr>
+        <tr><td>✨</td><td>이름에 목적 부스트 단어 수 <code>× 3</code></td><td>최대 ~12점</td></tr>
+        <tr><td>📍</td><td>지역 매치 (없으면 -10)</td><td>±10점</td></tr>
+      </table>
+      <div style="margin-top:6px; font-size:11px; color:#475569;">⬆️/⬇️ v7 가중치: 진짜 인기도(블로그·카페)를 강화하고 카카오맵 등장 횟수는 5회 saturate</div>
+      <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #c7d2fe;">
+        <div style="font-weight:600; color:#1e3a8a; font-size:13px; margin-bottom:4px;">📷 대표사진 추정</div>
+        <div style="font-size:12px; color:#1e40af;">네이버 이미지 검색 10개 후보를 휴리스틱으로 점수화: 가게명 일치(+15), 큰 사이즈(+10), 정상 비율(+8), 음식·인테리어 키워드(+3씩), 지도·로고 등은 -15. 최고점 이미지를 카드 우측에 표시.</div>
+      </div>
+      <div id="proxyStatus" class="proxy-status disabled" style="display:none; margin-top: 12px;"></div>
+    </div>
+  </details>
 </div>
 
 <script>
@@ -573,9 +605,11 @@ function scoreCandidate(candidate, ctx) {
   let score = 0;
   const { place, hits } = candidate;
 
-  // 1) 등장 횟수
-  const freqScore = hits.length * 3;
-  breakdown.push({ kind: "pos", text: `🔁 카카오맵 ${hits.length}회 등장 (+${freqScore})` });
+  // 1) 등장 횟수 (5회 saturate, 키워드 적합도 신호)
+  const cappedHits = Math.min(hits.length, 5);
+  const freqScore = cappedHits * 2;
+  const saturateNote = hits.length > 5 ? " (5회 saturate)" : "";
+  breakdown.push({ kind: "pos", text: `🔁 카카오맵 ${hits.length}회 등장 (적합도 +${freqScore}${saturateNote})` });
   score += freqScore;
 
   // 2) 카테고리 매치
@@ -615,11 +649,11 @@ function scoreCandidate(candidate, ctx) {
     score -= 10;
   }
 
-  // 5~7) 네이버 시그널 (있으면)
+  // 5~7) 네이버 시그널 (있으면) — v7에서 가중치 강화
   if (candidate.naver) {
     const n = candidate.naver;
-    const blogScore = Math.round(Math.log10((n.blogCount || 0) + 1) * 8);
-    const cafeScore = Math.round(Math.log10((n.cafeCount || 0) + 1) * 4);
+    const blogScore = Math.round(Math.log10((n.blogCount || 0) + 1) * 12);
+    const cafeScore = Math.round(Math.log10((n.cafeCount || 0) + 1) * 6);
     const newsScore = Math.round(Math.log10((n.newsCount || 0) + 1) * 3);
     if (blogScore > 0) {
       breakdown.push({ kind: "naver", text: `📝 네이버 블로그 ${n.blogCount.toLocaleString()}건 (+${blogScore})` });
@@ -725,12 +759,22 @@ function renderResults(enrichmentPending = false) {
         <span class="stat">📰 뉴스 <strong>${entry.naver.newsCount.toLocaleString()}</strong>건</span>
         ${entry.naver.topBlog ? `<div class="naver-blog-title" style="width:100%;">최근 블로그: "${escapeHtml(entry.naver.topBlog).substring(0, 80)}..."</div>` : ""}
       </div>` : "";
+    const imageUrl = entry.naver?.imageUrl;
+    const placeUrl = p.place_url || "#";
+    const imageBlock = imageUrl
+      ? `<a href="${escapeAttr(placeUrl)}" target="_blank" rel="noopener" title="${entry.naver?.imageTitle ? escapeAttr(entry.naver.imageTitle) : '대표 사진 (네이버 추정)'}"><img class="card-image" src="${escapeAttr(imageUrl)}" alt="${escapeAttr(p.place_name)}" loading="lazy" onerror="this.outerHTML='<div class=\\'card-image-fallback\\'>🍽️</div>'"></a>`
+      : isEnriched
+        ? `<div class="card-image-fallback" title="대표사진 없음">🍽️</div>`
+        : "";
     return `
       <div class="card">
         <div class="rank-badge ${rankClass}">${rank}</div>
+        <div class="card-right">
+          ${imageBlock}
+          <span class="score-pill ${isEnriched || (start+i)>=ENRICH_TOP_N ? '' : 'partial'}">${entry.score}점</span>
+        </div>
         <div class="card-header">
           <div><div class="card-name">${escapeHtml(p.place_name)}</div></div>
-          <span class="score-pill ${isEnriched || (start+i)>=ENRICH_TOP_N ? '' : 'partial'}">${entry.score}점</span>
         </div>
         <div class="tag-row">
           ${shortCat ? `<span class="tag tag-cat">${escapeHtml(shortCat)}</span>` : ""}
